@@ -49,3 +49,5 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+gridomatic/xensecret
+gridomatic_web/local_settings.py

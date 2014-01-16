@@ -107,3 +107,8 @@ STATICFILES_DIRS = (
 XEN_URL      = 'http://node1-c1.srv.example.com'
 XEN_USER     = 'root'
 XEN_PASSWORD = '***'
+
+try: 
+	from local_settings import *
+except:
+	pass
