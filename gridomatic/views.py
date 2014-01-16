@@ -27,7 +27,7 @@ def get_network_list(session):
 	network_list = []
 	for net in networks:
 		if not 'Production' in networks[net]['tags']: continue
-		network_list += [(networks[net]['uuid'], networks[net]['name_label'])]
+		network_list += [(networks[net]['uuid'], networks[net]['name_label'], networks[net]['name_description'])]
 	return network_list
 
 def get_template_list(session):
@@ -145,3 +145,10 @@ def vm_create(request):
 		return redirect('vm_list')
 	return render(request, 'gridomatic/vm_create.html', {'form': form})
 
+def network_list(request):
+	session = create_session()
+	network_list = get_network_list(session)
+	return render(request, 'gridomatic/network_list.html', {'networks': network_list})
+
+def network_create(request):
+	pass
