@@ -16,7 +16,7 @@
 <tbody>
 {% for vm in vms  %}
 <tr>
-<td>{{ vm.name }}</td><td>{{ vm.power_state}}</td><td>
+<td><a href="/vm/details/{{ vm.uuid }}" > {{ vm.name }}</a></td><td>{{ vm.power_state}}</td><td>
 {% if vm.power_state == 'Halted' or vm.power_state == 'Paused' or vm.power_state == 'Suspended' %}
 	<input type="button" data-uuid="{{ vm.uuid }}" class="btn btn-xs btn-success vm-start"   value="Start">
 {% elif vm.power_state == 'Running' %}

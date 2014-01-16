@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h3>VM Details</h3>
+
+<table class="table table-striped table-condensed table-hover">
+<thead>
+<tr>
+<th>Name</th><th>Power State</th><th>&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+{% for items in details  %}
+<tr>
+<td>{{ vm.name }}</td><td>{{ vm.power_state}}</td><td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock%}
