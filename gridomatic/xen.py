@@ -63,7 +63,7 @@ class Xen():
 	def vm_stop(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)
 		try:
-			self.session.xenapi.VM.clean_shutdown(ref, False, True)
+			self.session.xenapi.VM.clean_shutdown(ref)
 		except:
 			pass
 	

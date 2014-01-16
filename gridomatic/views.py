@@ -1,26 +1,28 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-import XenAPI
 from forms import VMCreateForm
-from .xen import *
+from .xen import Xen
+import json
+import tasks
 
 def vm_list(request):
 	return render(request, 'gridomatic/vm_list.html', {'vms': Xen().vm_list()})
 
 def vm_start(request):
 	uuid = request.POST.get('uuid', None)
-	Xen().vm_start(uuid)
-	return redirect('vm_list')
+	task_id = tasks.vm_start.delay(uuid).id
+	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def vm_stop(request):
 	uuid = request.POST.get('uuid', None)
-	Xen().vm_stop(uuid)
-	return redirect('vm_list')
+	task_id = tasks.vm_stop.delay(uuid).id
+	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def vm_restart(request):
 	uuid = request.POST.get('uuid', None)
-	Xen().vm_restart(uuid)
-	return redirect('vm_list')
+	task_id = tasks.vm_restart.delay(uuid).id
+	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def deploy(name, ip, gw, netmask, ns, network, template, host, ip6, gw6, netmask6, sshkey):
 	import subprocess, os

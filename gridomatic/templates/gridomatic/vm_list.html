@@ -17,30 +17,14 @@
 {% for vm in vms  %}
 <tr>
 <td>{{ vm.name }}</td><td>{{ vm.power_state}}</td><td>
-
 {% if vm.power_state == 'Halted' or vm.power_state == 'Paused' or vm.power_state == 'Suspended' %}
-<form method="POST" action="{% url 'vm_start' %}">
-	{% csrf_token %}
-	<input type="hidden" name="uuid" value="{{ vm.uuid }}">
-	<input type="submit" class="btn btn-success" value="Start">
-</form>
+	<input type="button" data-uuid="{{ vm.uuid }}" class="btn btn-xs btn-success vm-start"   value="Start">
 {% elif vm.power_state == 'Running' %}
-<form method="POST" action="{% url 'vm_restart' %}" class="action-form">
-	{% csrf_token %}
-	<input type="hidden" name="uuid" value="{{ vm.uuid }}">
-	<input type="submit" class="btn btn-warning" value="Restart">
-</form>
-
-<form method="POST" action="{% url 'vm_stop' %}" class="action-form">
-	{% csrf_token %}
-	<input type="hidden" name="uuid" value="{{ vm.uuid }}">
-	<input type="submit" class="btn btn-danger" value="Stop">
-</form>
-
+	<input type="button" data-uuid="{{ vm.uuid }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
+	<input type="button" data-uuid="{{ vm.uuid }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
 {% endif %}
 </tr>
 {% endfor %}
 </tbody>
 </table>
 {% endblock%}
-

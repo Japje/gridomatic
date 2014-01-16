@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+import djcelery
+djcelery.setup_loader()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -37,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
+	'djcelery',
     'gridomatic',
 )
 
@@ -108,7 +111,13 @@ XEN_URL      = 'http://node1-c1.srv.example.com'
 XEN_USER     = 'root'
 XEN_PASSWORD = '***'
 
-try: 
+# Celery
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
+
+try:
 	from local_settings import *
-except:
+except ImportError:
 	pass

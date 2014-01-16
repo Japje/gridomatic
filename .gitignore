@@ -51,3 +51,4 @@ docs/_build/
 
 gridomatic/xensecret
 gridomatic_web/local_settings.py
+db.sqlite3
