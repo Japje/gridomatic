@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-from forms import VMCreateForm
+from forms import *
 from .xen import Xen
 import json
 import tasks
@@ -73,9 +73,13 @@ def vm_create(request):
 	return render(request, 'gridomatic/vm_create.html', {'form': form})
 
 def network_list(request):
-	session = create_session()
-	network_list = get_network_list(session)
+	network_list = Xen().network_list_dev()
 	return render(request, 'gridomatic/network_list.html', {'networks': network_list})
 
 def network_create(request):
-	pass
+	form = NetworkCreateForm(request.POST or None)
+
+	if form.is_valid():
+		Xen().network_create(form.cleaned_data)
+		return redirect('network_list')
+	return render(request, 'gridomatic/network_create.html', {'form': form})

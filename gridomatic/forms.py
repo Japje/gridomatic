@@ -22,3 +22,8 @@ class VMCreateForm(forms.Form):
 	cpu_cores   = forms.IntegerField()
 
 	sshkey      = forms.CharField(help_text="Your PUBLIC ssh-key", label="SSH-key")
+
+class NetworkCreateForm(forms.Form):
+	name        = forms.CharField(help_text="Name for the new Network", label="Name")
+	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
+	vlan			= forms.IntegerField()

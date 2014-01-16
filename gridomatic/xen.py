@@ -24,6 +24,31 @@ class Xen():
 			network_list += [(networks[net]['uuid'], networks[net]['name_label'])]
 		return network_list
 
+	def network_list_dev(self):
+		networks = self.session.xenapi.network.get_all_records()
+		network_list = []
+		for ref, net in networks.items():
+			if not 'Production' in net['tags']: continue
+			network_list += [{
+				'name':        net['name_label'],
+				'description': net['name_description'],
+				'uuid':        net['uuid'],
+			}]
+		return network_list
+
+	def network_create(self, options):
+		name         = options['name']
+		description  = options['description']
+		vlan         = str(options['vlan']) # str? yes... str :( TY citrix for being so consistent!
+		other_config = {
+			'automatic': 'false',
+		}
+		tags = [ 'Production']
+
+		network_ref = self.session.xenapi.network.create({'name_label': name, 'name_description': description, 'other_config': other_config, 'tags': tags})
+		self.session.xenapi.pool.create_VLAN('bond0', network_ref, vlan)
+		return True
+
 	def get_template_list(self):
 		templates = self.session.xenapi.VM.get_all_records()
 		template_list = []
