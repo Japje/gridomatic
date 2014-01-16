@@ -1,5 +1,5 @@
 #!/bin/bash
-secret="-s node1-c1.srv.example.com -pw ***"
+. xensecret
 
 env
 
