@@ -34,6 +34,7 @@ def get_template_list(session):
 	templates = session.xenapi.VM.get_all_records()
 	template_list = []
 	for tpl in templates:
+		if not 'Production' in templates[tpl]['tags']: continue
 		if not templates[tpl]["is_a_template"]: continue
 		template_list += [(templates[tpl]['uuid'], templates[tpl]['name_label'])]
 	return template_list
@@ -96,7 +97,7 @@ def vm_restart(request):
 		pass
 	return redirect('vm_list')
 
-def deploy(name, ip, gw, netmask, ns, network, template, host):
+def deploy(name, ip, gw, netmask, ns, network, template, host, ip6, gw6, netmask6, sshkey):
 	import subprocess, os
 	(name, domain) = name.split('.', 1)
 
@@ -110,6 +111,10 @@ def deploy(name, ip, gw, netmask, ns, network, template, host):
 	env['VMHOST']      = host
 	env['NETWORKUUID'] = network
 	env['TMPLUUID']    = template
+	env['VMIP6']       = ip6
+	env['VMGW6']       = gw6
+	env['VMMASK6']     = netmask6
+	env['SSHKEY']      = sshkey
 
 	subprocess.Popen(os.path.dirname(os.path.dirname(__file__)) + '/gridomatic/deploy.sh', env=env)
 
@@ -132,6 +137,10 @@ def vm_create(request):
 			network  = form.cleaned_data['network'],
 			template = form.cleaned_data['template'],
 			host     = form.cleaned_data['host'],
+			ip6      = form.cleaned_data['ip_address6'],
+			gw6      = form.cleaned_data['gateway6'],
+			netmask6 = form.cleaned_data['netmask6'],
+			sshkey   = form.cleaned_data['sshkey'],
 		)
 		return redirect('vm_list')
 	return render(request, 'gridomatic/vm_create.html', {'form': form})
