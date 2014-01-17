@@ -81,14 +81,14 @@ class Xen():
 	def vm_details(self, uuid):
 		vm_ref = self.session.xenapi.VM.get_by_uuid(uuid)
 		details = self.session.xenapi.VM.get_record(vm_ref)
-		detail_list = []
-		for ref, field in details.items():
-			#print ref
-			#print field
-			detail_list += [{
-				# I have no idea what im doing
-			}]
-		return detail_list
+		#detail_list = []
+		#for ref, field in details.items():
+		#	print ref
+		#	#print field
+		#	detail_list += [{
+		#		# I have no idea what im doing
+		#	}]
+		return details
 	
 	def vm_start(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)
