@@ -8,20 +8,20 @@ class VMCreateForm(forms.Form):
 	gateway     = forms.GenericIPAddressField(protocol='ipv4')
 	dns         = forms.CharField(help_text="List of space seperated Nameserver Adresses", label="DNS Servers")
 
-	ip_address6 = forms.GenericIPAddressField(protocol='ipv6', label="IPv6 Address", required=False) 
-	netmask6    = forms.CharField(help_text="Subnet number like 64", required=False)
-	gateway6    = forms.GenericIPAddressField(protocol='ipv6', required=False)
+	ip_address6 = forms.GenericIPAddressField(protocol='ipv6', required=False, label="IPv6 Address")
+	netmask6    = forms.IntegerField(label='IPv6 Prefixlength', required=False, min_value=1, initial=64, max_value=128)
+	gateway6    = forms.GenericIPAddressField(protocol='ipv6', required=False, label='IPv6 Gateway', )
 
 
 	template    = forms.ChoiceField(choices = [])
 	network     = forms.ChoiceField(choices = [])
 	host        = forms.ChoiceField(choices = [])
 
-	disk_size   = forms.IntegerField(help_text="Size in GB")
-	mem_size    = forms.IntegerField(help_text="Size in MB")
-	cpu_cores   = forms.IntegerField()
+	disk_size   = forms.IntegerField(help_text="Size in GB", min_value=1)
+	mem_size    = forms.IntegerField(help_text="Size in MB", min_value=128)
+	cpu_cores   = forms.IntegerField(initial=1, min_value=1)
 
-	sshkey      = forms.CharField(help_text="Your PUBLIC ssh-key", label="SSH-key")
+	sshkey      = forms.CharField(help_text="In OpenSSH format", label="SSH Public Key")
 
 class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network", label="Name")

@@ -47,12 +47,11 @@ def deploy(name, ip, gw, netmask, ns, network, template, host, ip6, gw6, netmask
 
 
 def vm_create(request):
-	session = create_session()
 	form = VMCreateForm(request.POST or None)
-
-	form.fields['network'].choices  = get_network_list(session)
-	form.fields['template'].choices = get_template_list(session)
-	form.fields['host'].choices     = get_host_list(session)
+	x = Xen()
+	form.fields['network'].choices  = x.get_network_list()
+	form.fields['template'].choices = x.get_template_list()
+	form.fields['host'].choices     = x.get_host_list()
 
 	if form.is_valid():
 		deploy(
