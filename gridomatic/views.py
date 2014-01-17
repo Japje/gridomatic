@@ -9,6 +9,9 @@ import tasks
 def vm_list(request):
 	return render(request, 'gridomatic/vm_list.html', {'vms': Xen().vm_list()})
 
+def vm_details(request, uuid):
+	return render(request, 'gridomatic/vm_details.html', {'details': Xen().vm_details(uuid)})
+
 def vm_start(request):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_start.delay(uuid).id

@@ -7,6 +7,7 @@ urlpatterns = patterns('',
 	url(r'^vm/stop/$',    vm_stop,    name='vm_stop'),
 	url(r'^vm/restart/$', vm_restart, name='vm_restart'),
 	url(r'^vm/create/$',  vm_create,  name='vm_create'),
+	url(r'^vm/details/(?P<uuid>[^/]+)/$',  vm_details,  name='vm_details'),
 
 	url(r'^network/list/$',    network_list,    name='network_list'),
 	url(r'^network/create/$',  network_create,  name='network_create'),

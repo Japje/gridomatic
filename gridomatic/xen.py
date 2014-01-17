@@ -77,6 +77,11 @@ class Xen():
 				'uuid':        vm['uuid'],
 			}]
 		return vm_list
+
+	def vm_details(self, uuid):
+		vm_ref = self.session.xenapi.VM.get_by_uuid(uuid)
+		details = self.session.xenapi.VM.get_record(vm_ref)
+		return details
 	
 	def vm_start(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)
