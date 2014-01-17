@@ -58,8 +58,8 @@ def vm_create(request):
 	form.fields['host'].choices     = x.get_host_list()
 
 	if form.is_valid():
-		Xen().vm_deploy(form.cleaned_data)
-		return redirect('vm_list')
+		task_id = tasks.vm_deploy.delay(form.cleaned_data).id
+		return render(request, 'gridomatic/vm_create_wait.html', {'form': form, 'task_id': task_id})
 	return render(request, 'gridomatic/vm_create.html', {'form': form})
 
 def network_list(request):

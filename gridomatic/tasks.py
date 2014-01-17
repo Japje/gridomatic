@@ -17,3 +17,7 @@ def vm_restart(uuid):
 @shared_task
 def vm_destroy(uuid):
 	Xen().vm_destroy(uuid)
+
+@shared_task
+def vm_deploy(options):
+	Xen().vm_deploy(options)
