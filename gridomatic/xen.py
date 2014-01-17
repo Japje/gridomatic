@@ -107,3 +107,20 @@ class Xen():
 	
 	def vm_deploy(self, options):
 		pass
+
+	def vm_update(self, uuid, fields):
+		memory = int(fields['mem_size'])*1024*1024
+		cpu_cores = int(fields['cpu_cores'])
+		description = fields['description']
+		vm_ref = self.session.xenapi.VM.get_by_uuid(uuid)
+		cur_cpu_cores = int(self.session.xenapi.VM.get_VCPUs_max(vm_ref))
+
+		if cur_cpu_cores >= cpu_cores:
+			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
+			self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
+		else:
+			self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
+			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
+	
+		self.session.xenapi.VM.set_memory_limits(vm_ref, str(memory), str(memory), str(memory),str(memory))
+		self.session.xenapi.VM.set_name_description(vm_ref, description)

@@ -27,3 +27,9 @@ class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network", label="Name")
 	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
 	vlan			= forms.IntegerField()
+
+
+class VMEditForm(forms.Form):
+	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
+	mem_size    = forms.IntegerField(help_text="Size in MB", min_value=128)
+	cpu_cores   = forms.IntegerField(initial=1, min_value=1)

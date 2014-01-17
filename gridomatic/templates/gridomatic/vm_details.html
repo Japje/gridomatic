@@ -6,6 +6,8 @@
 {% block content %}
 <h3>VM Details for {{ details.name_label }}</h3>
 
+<a href="{% url "vm_edit" details.uuid %}" class="btn btn-success" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit VM Settings</a>
+<hr>
 
 <div class="panel-group" id="accordion">
   <div class="panel panel-default">

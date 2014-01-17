@@ -12,6 +12,20 @@ def vm_list(request):
 def vm_details(request, uuid):
 	return render(request, 'gridomatic/vm_details.html', {'details': Xen().vm_details(uuid)})
 
+def vm_edit(request, uuid):
+	details = Xen().vm_details(uuid)
+	form = VMEditForm(request.POST or None, initial={
+		'description': details['name_description'],
+		'cpu_cores':   details['VCPUs_at_startup'],
+		'mem_size':    int(details['memory_static_max'])/1024/1024,
+	})
+
+	if form.is_valid():
+		Xen().vm_update(uuid, form.cleaned_data)
+		return redirect('vm_details', uuid )
+
+	return render(request, 'gridomatic/vm_edit.html', {'details': details, 'form': form})
+
 def vm_start(request):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_start.delay(uuid).id
