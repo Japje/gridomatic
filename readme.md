@@ -60,7 +60,7 @@ On OSX:
 
 On Ubuntu:
 
-	apt-get install rabbitmq
+	apt-get install rabbitmq-server
 
 Start Server for dev:
 	
