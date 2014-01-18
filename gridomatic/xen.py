@@ -78,11 +78,22 @@ class Xen():
 			}]
 		return vm_list
 
+
 	def vm_details(self, uuid):
 		vm_ref = self.session.xenapi.VM.get_by_uuid(uuid)
-		details = self.session.xenapi.VM.get_record(vm_ref)
-		return details
-	
+		vm_details = self.session.xenapi.VM.get_record(vm_ref)
+		return vm_details
+
+	def network_names(self, vifs):
+		names = []
+		for vif_ref in vifs:
+			net_ref = self.session.xenapi.VIF.get_network(vif_ref)
+			net_name = self.session.xenapi.network.get_name_label(net_ref)
+			names += [{
+				'name':        net_name,
+			}]
+		return names
+
 	def vm_start(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)
 		try:
@@ -96,6 +107,13 @@ class Xen():
 			self.session.xenapi.VM.clean_shutdown(ref)
 		except:
 			pass
+
+	def vm_destroy(self, uuid):
+		ref = self.session.xenapi.VM.get_by_uuid(uuid)
+		try:
+			self.session.xenapi.VM.destroy(ref)
+		except:
+			pass
 	
 	def vm_restart(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)
@@ -106,7 +124,55 @@ class Xen():
 			pass
 	
 	def vm_deploy(self, options):
-		pass
+		name     = options['hostname'],
+		hostname     = options['hostname'],
+		network  = options['network'],
+		sshkey   = options['sshkey'],
+		(name, domain) = name[0].split('.', 1)
+
+		host_ref = self.session.xenapi.host.get_by_name_label(options['host'])
+		pbd_ref  = self.session.xenapi.host.get_PBDs(host_ref[0])
+		for ref in pbd_ref:
+			config =  self.session.xenapi.PBD.get_device_config(ref)
+                        if not 'device' in config: continue
+			sr_ref = self.session.xenapi.PBD.get_SR(ref)			
+
+		template_ref = self.session.xenapi.VM.get_by_uuid(options['template'])
+		vm_ref = self.session.xenapi.VM.copy(template_ref, str(hostname[0]), sr_ref)
+		self.session.xenapi.VM.set_is_a_template(vm_ref, False)
+
+		# TODO puppet.dostuff()
+
+		# TODO create and attach VIF
+		#vif-create vm-uuid=${VMUUID} network-uuid=$NETWORKUUID mac=random device=0
+		#self.session.xenapi.VIF.create(records)
+
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ip '+options['ip_address'])
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/gw '+options['gateway'])
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/nm '+options['netmask'])
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ns '+options['dns'])
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/dm '+options['domain'])
+
+		try:
+			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ip6 ', options['ip_address6'])
+			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/gw6 ', options['gateway6'])
+			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/nm6 ', options['gateway6'])
+		except:
+			pass
+
+		# below should be converted to base64 values
+		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/sshkey', sshkey)
+		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/puppet/pub', puppet_pup)
+		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/puppet/prv', puppet_prv)
+
+		self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(options['cpu_cores']))
+		self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(options['cpu_cores']))
+		intmem = int(option['memory'])*1024*1024
+		mem = str(intmem)
+		#self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
+		
+		self.session.xenapi.VM.set_PV_args(vm_ref, '-- console=hvc')
+		self.session.xenapi.VM.start(vm_ref, False, True)
 
 	def vm_update(self, uuid, fields):
 		memory = int(fields['mem_size'])*1024*1024

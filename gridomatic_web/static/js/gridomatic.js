@@ -35,6 +35,12 @@ $(document).ready(function() {
 		$.post('/vm/stop/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
 	})
 
+	$('.vm-destroy').click(function() {
+		$(this).parent().spin('small')
+		$(this).hide()
+		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
+	})
+
 	$('.vm-restart').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()

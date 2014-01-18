@@ -7,6 +7,8 @@
 <h3>VM Details for {{ details.name_label }}</h3>
 
 <a href="{% url "vm_edit" details.uuid %}" class="btn btn-success" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit VM Settings</a>
+<input type="button" method="POST" data-uuid="{{ details.uuid }}" class="btn btn-danger  vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
+
 <hr>
 
 <div class="panel-group" id="accordion">
@@ -34,6 +36,11 @@
 					<tr><td>Cores</td><td>{{ details.VCPUs_at_startup }}</td></tr>
 					<tr><td>Memory</td><td>{{ details.memory_static_max|filesizeformat }}</td></tr>
 					<tr><td>Tags</td><td>{{ details.tags|json2html }}</td></tr>
+					<tr><td>Networks</td><td><ul>
+						{% for network in networks %}
+							{{ network.name }}</br>
+						{% endfor %}
+					</ul></td></tr>
             </tbody>
          </table>
 

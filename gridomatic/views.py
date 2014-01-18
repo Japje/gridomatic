@@ -10,7 +10,10 @@ def vm_list(request):
 	return render(request, 'gridomatic/vm_list.html', {'vms': Xen().vm_list()})
 
 def vm_details(request, uuid):
-	return render(request, 'gridomatic/vm_details.html', {'details': Xen().vm_details(uuid)})
+	details = Xen().vm_details(uuid)
+	vifs = details['VIFs']
+	networks = Xen().network_names(vifs) 
+	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks})
 
 def vm_edit(request, uuid):
 	details = Xen().vm_details(uuid)
@@ -36,32 +39,15 @@ def vm_stop(request):
 	task_id = tasks.vm_stop.delay(uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
+def vm_destroy(request):
+        uuid = request.POST.get('uuid', None)
+	tasks.vm_destroy(uuid).id
+	return redirect('vm_list')
+
 def vm_restart(request):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_restart.delay(uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
-
-def deploy(name, ip, gw, netmask, ns, network, template, host, ip6, gw6, netmask6, sshkey):
-	import subprocess, os
-	(name, domain) = name.split('.', 1)
-
-	env = os.environ.copy()
-	env['VMNAME']      = name
-	env['VMIP']        = ip
-	env['VMGW']        = gw
-	env['VMMASK']      = netmask
-	env['VMNS']        = ns
-	env['VMDM']        = domain
-	env['VMHOST']      = host
-	env['NETWORKUUID'] = network
-	env['TMPLUUID']    = template
-	env['VMIP6']       = ip6
-	env['VMGW6']       = gw6
-	env['VMMASK6']     = netmask6
-	env['SSHKEY']      = sshkey
-
-	subprocess.Popen(os.path.dirname(os.path.dirname(__file__)) + '/gridomatic/deploy.sh', env=env)
-
 
 def vm_create(request):
 	form = VMCreateForm(request.POST or None)
@@ -71,20 +57,7 @@ def vm_create(request):
 	form.fields['host'].choices     = x.get_host_list()
 
 	if form.is_valid():
-		deploy(
-			name     = form.cleaned_data['hostname'],
-			ip       = form.cleaned_data['ip_address'],
-			gw       = form.cleaned_data['gateway'],
-			netmask  = form.cleaned_data['netmask'],
-			ns       = form.cleaned_data['dns'],
-			network  = form.cleaned_data['network'],
-			template = form.cleaned_data['template'],
-			host     = form.cleaned_data['host'],
-			ip6      = form.cleaned_data['ip_address6'],
-			gw6      = form.cleaned_data['gateway6'],
-			netmask6 = form.cleaned_data['netmask6'],
-			sshkey   = form.cleaned_data['sshkey'],
-		)
+		Xen().vm_deploy(form.cleaned_data)
 		return redirect('vm_list')
 	return render(request, 'gridomatic/vm_create.html', {'form': form})
 
