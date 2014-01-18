@@ -141,35 +141,41 @@ class Xen():
 		vm_ref = self.session.xenapi.VM.copy(template_ref, str(hostname[0]), sr_ref)
 		self.session.xenapi.VM.set_is_a_template(vm_ref, False)
 
-		# TODO puppet.dostuff()
-
 		# TODO create and attach VIF
 		#vif-create vm-uuid=${VMUUID} network-uuid=$NETWORKUUID mac=random device=0
 		#self.session.xenapi.VIF.create(records)
 
-		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ip '+options['ip_address'])
-		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/gw '+options['gateway'])
-		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/nm '+options['netmask'])
-		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ns '+options['dns'])
-		self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/dm '+options['domain'])
+		data = {}
+		data['vm-data/ip'] = str(options['ip_address'])
+		data['vm-data/gw'] = str(options['gateway'])
+		data['vm-data/nm'] = str(options['netmask'])
+		data['vm-data/ns'] = str(options['dns'])
+		data['vm-data/dm'] = str(domain)
+		data['vm-data/sshkey'] = str(options['sshkey'])
 
-		try:
-			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/ip6 ', options['ip_address6'])
-			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/gw6 ', options['gateway6'])
-			self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/nm6 ', options['gateway6'])
-		except:
-			pass
+		if options['ip_address6']:
+			data['vm-data/ip6'] = str(options['ip_address6'])
 
-		# below should be converted to base64 values
-		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/sshkey', sshkey)
-		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/puppet/pub', puppet_pup)
-		#self.session.xenapi.VM.set_xenstore_data(vm_ref, 'vm-data/puppet/prv', puppet_prv)
+		if options['gateway6']:
+			data['vm-data/gw6'] = str(options['gateway6'])
 
+		if options['netmask6']:
+			data['vm-data/nm6'] = str(options['netmask6'])
+
+		#if puppet['pubkey']:
+		#	data['vm-data/puppet/pub'] = puppet['pubkey']
+
+		#if puppet['prvkey']:
+		#	data['vm-data/puppet/prv'] = puppet['prvkey']
+
+
+		self.session.xenapi.VM.set_xenstore_data(vm_ref, data)
+		
 		self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(options['cpu_cores']))
 		self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(options['cpu_cores']))
-		intmem = int(option['memory'])*1024*1024
+		intmem = int(options['mem_size'])*1024*1024
 		mem = str(intmem)
-		#self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
+		self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
 		
 		self.session.xenapi.VM.set_PV_args(vm_ref, '-- console=hvc')
 		self.session.xenapi.VM.start(vm_ref, False, True)

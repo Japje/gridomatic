@@ -17,7 +17,6 @@ class VMCreateForm(forms.Form):
 	network     = forms.ChoiceField(choices = [])
 	host        = forms.ChoiceField(choices = [])
 
-	disk_size   = forms.IntegerField(help_text="Size in GB", min_value=1)
 	mem_size    = forms.IntegerField(help_text="Size in MB", min_value=128)
 	cpu_cores   = forms.IntegerField(initial=1, min_value=1)
 
