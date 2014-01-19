@@ -49,6 +49,11 @@ class Xen():
 		self.session.xenapi.pool.create_VLAN('bond0', network_ref, vlan)
 		return True
 
+	def network_details(self, uuid):
+		network_ref = self.session.xenapi.network.get_by_uuid(uuid)
+		network_details = self.session.xenapi.network.get_record(network_ref)
+		return network_details
+
 	def get_template_list(self):
 		templates = self.session.xenapi.VM.get_all_records()
 		template_list = []
@@ -92,6 +97,17 @@ class Xen():
 			names += [{
 				'name':        net_name,
 			}]
+		return names
+
+        def vmnames_by_vif(self, vifs):
+		names = []
+		for vif_ref in vifs:
+			vm_ref = self.session.xenapi.VIF.get_VM(vif_ref)
+			vm_records = self.session.xenapi.VM.get_record(vm_ref)
+			if not vm_records["is_a_template"]: 
+				names += [{
+					'name':        vm_records["name_label"],
+				}]
 		return names
 
 	def vm_start(self, uuid):
@@ -196,3 +212,15 @@ class Xen():
 	
 		self.session.xenapi.VM.set_memory_limits(vm_ref, str(memory), str(memory), str(memory),str(memory))
 		self.session.xenapi.VM.set_name_description(vm_ref, description)
+
+
+	def network_update(self, uuid, fields):
+		network_ref = self.session.xenapi.network.get_by_uuid(uuid)
+
+		self.session.xenapi.network.set_name_description(network_ref, fields['description'])
+		self.session.xenapi.network.set_name_label(network_ref, fields['name'])
+
+		data = {}
+		data['racktables_id'] = fields['racktables_id']
+		data['automatic'] = 'false'
+		self.session.xenapi.network.set_other_config(network_ref, data)

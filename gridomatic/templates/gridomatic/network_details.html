@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load json2html %}
+
+{% block content %}
+<h3>VM Details for {{ details.name_label }}</h3>
+
+<a href="{% url "network_edit" details.uuid %}" class="btn btn-success">Edit Network Settings</a>
+
+<hr>
+
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Simple Details
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+
+         <table class="table table-striped table-condensed table-hover">
+            <thead>
+               <tr>
+                  <th>Name</th><th>Value</th>
+               </tr>
+            </thead>
+            <tbody>
+					<tr><td>Description</td><td>{{ details.name_description }}</td></tr>
+					<tr><td>UUID</td><td>{{ details.uuid }}</td></tr>
+					<tr><td>MTU</td><td>{{ details.MTU }}</td></tr>
+					<tr><td>Tags</td><td>{{ details.tags|json2html }}</td></tr>
+					<tr><td>Attached to VMs:</td><td><ul>
+						{% for vm in vms %}
+							<li>{{ vm.name }}</li>
+						{% endfor %}
+					</ul></td></tr>
+            </tbody>
+         </table>
+
+
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          Advanced Details
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+
+			<table class="table table-striped table-condensed table-hover">
+				<thead>
+					<tr>
+						<th>Name</th><th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for key,value in details.items  %}
+					<tr>
+						<td>{{ key }}</td><td>{{ value|json2html }}</td><td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+{% endblock%}

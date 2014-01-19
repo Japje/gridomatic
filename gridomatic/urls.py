@@ -11,6 +11,8 @@ urlpatterns = patterns('',
 	url(r'^vm/details/(?P<uuid>[^/]+)/$',  vm_details, name='vm_details'),
 	url(r'^vm/edit/(?P<uuid>[^/]+)/$',     vm_edit,    name='vm_edit'),
 
-	url(r'^network/list/$',    network_list,    name='network_list'),
-	url(r'^network/create/$',  network_create,  name='network_create'),
+	url(r'^network/list/$',                    network_list,    name='network_list'),
+	url(r'^network/create/$',                  network_create,  name='network_create'),
+	url(r'^network/details/(?P<uuid>[^/]+)/$', network_details, name='network_details'),
+	url(r'^network/edit/(?P<uuid>[^/]+)/$',    network_edit,    name='network_edit'),
 )

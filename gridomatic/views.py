@@ -72,3 +72,24 @@ def network_create(request):
 		Xen().network_create(form.cleaned_data)
 		return redirect('network_list')
 	return render(request, 'gridomatic/network_create.html', {'form': form})
+
+def network_details(request, uuid):
+	details = Xen().network_details(uuid)
+	vifs = details['VIFs']
+	vms = Xen().vmnames_by_vif(vifs) 
+	return render(request, 'gridomatic/network_details.html', {'details': details, 'vms': vms })
+
+
+def network_edit(request, uuid):
+	details = Xen().network_details(uuid)
+	form = NetworkEditForm(request.POST or None, initial={
+		'name': details['name_label'],
+		'description': details['name_description'],
+		'racktables_id': details['other_config']['racktables_id'],
+	})
+
+	if form.is_valid():
+		Xen().network_update(uuid, form.cleaned_data)
+		return redirect('network_details', uuid )
+
+	return render(request, 'gridomatic/network_edit.html', {'details': details, 'form': form})

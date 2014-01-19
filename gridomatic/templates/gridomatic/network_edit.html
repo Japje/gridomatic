@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% load json2html %}
+
+{% block content %}
+<h3>Edit Network Details for {{ details.name_label }}</h3>
+<hr>
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Simple Details
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+
+<form action="" method="post" class="form-horizontal" role="form">
+ {% csrf_token %}
+ {% bootstrap_form form layout="horizontal" %}
+<button type="submit" class="btn btn-primary"> Save Settings</button>
+</form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+{% endblock%}

@@ -5,8 +5,8 @@
 {% block content %}
 <h3>Networks</h3>
 
-<a href="{% url "network_create" %}" class="btn btn-success pull-right">Create new Network</a>
-
+<a href="{% url "network_create" %}" class="btn btn-success">Create new Network</a>
+<hr>
 <table class="table table-striped table-condensed table-hover">
 <thead>
 <tr>
@@ -16,7 +16,7 @@
 <tbody>
 {% for network in networks  %}
 <tr>
-<td>{{ network.name }}</td><td>{{ network.description}}</td><td>
+<td><a href="/network/details/{{ network.uuid }}" > {{ network.name }}</a></td><td>{{ network.description }}</td><td>
 </tr>
 {% endfor %}
 </tbody>

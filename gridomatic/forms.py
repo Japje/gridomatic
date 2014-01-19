@@ -1,7 +1,7 @@
 from django import forms
 
 class VMCreateForm(forms.Form):
-	hostname   = forms.CharField()
+	hostname    = forms.CharField()
 
 	ip_address  = forms.GenericIPAddressField(protocol='ipv4', label="IP Address") 
 	netmask     = forms.GenericIPAddressField(protocol='ipv4')
@@ -24,11 +24,16 @@ class VMCreateForm(forms.Form):
 
 class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network", label="Name")
-	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
-	vlan			= forms.IntegerField()
+	description = forms.CharField(help_text="Please provide a detailed description!", label="Description")
+	vlan        = forms.IntegerField()
 
 
 class VMEditForm(forms.Form):
 	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
-	mem_size    = forms.IntegerField(help_text="Size in MB", min_value=128)
-	cpu_cores   = forms.IntegerField(initial=1, min_value=1)
+	mem_size        = forms.IntegerField(help_text="Size in MB", min_value=128)
+	cpu_cores       = forms.IntegerField(initial=1, min_value=1)
+
+class NetworkEditForm(forms.Form):
+	name		= forms.CharField(help_text="Please provide a name!", label="name")
+	description	= forms.CharField(help_text="Please provide a detailed description!", label="Description")
+	racktables_id	= forms.CharField(help_text="network_id from racktables", label="Racktables_id")
