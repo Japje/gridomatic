@@ -41,6 +41,11 @@
 							{{ network.name }}</br>
 						{% endfor %}
 					</ul></td></tr>
+					<tr><td>Disks</td><td><ul>
+						{% for disk in disks %}
+							<li>[{{ disk.name }}] - Size: {{ disk.size|filesizeformat }}</li>
+						{% endfor %}
+					</ul></td></tr>
             </tbody>
          </table>
 

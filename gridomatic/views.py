@@ -10,10 +10,11 @@ def vm_list(request):
 	return render(request, 'gridomatic/vm_list.html', {'vms': Xen().vm_list()})
 
 def vm_details(request, uuid):
-	details = Xen().vm_details(uuid)
-	vifs = details['VIFs']
-	networks = Xen().network_names(vifs) 
-	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks})
+	details  = Xen().vm_details(uuid)
+	networks = Xen().network_names(details['VIFs']) 
+	disks    = Xen().disks_by_vdb(details['VBDs']) 
+	
+	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks, 'disks': disks})
 
 def vm_edit(request, uuid):
 	details = Xen().vm_details(uuid)

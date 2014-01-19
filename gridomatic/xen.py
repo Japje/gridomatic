@@ -224,3 +224,17 @@ class Xen():
 		data['racktables_id'] = fields['racktables_id']
 		data['automatic'] = 'false'
 		self.session.xenapi.network.set_other_config(network_ref, data)
+
+        def disks_by_vdb(self, vbds):
+		data = []
+		for vbd_ref in vbds:
+			vbd_records = self.session.xenapi.VBD.get_record(vbd_ref)
+			if not vbd_records['type'] == 'Disk': continue
+			vdi_records = self.session.xenapi.VDI.get_record(vbd_records['VDI'])
+			data += [{
+				'name':        vdi_records["name_label"],
+				'size':        vdi_records["virtual_size"],
+				'physical_utilisation': vdi_records["physical_utilisation"],
+			}]
+		return data
+
