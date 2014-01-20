@@ -153,7 +153,7 @@ class Xen():
 			self.session.xenapi.VM.start(ref, False, True)
 		except:
 			pass
-	
+
 
 	def vm_deploy(self, options):
 		name           = options['hostname'],

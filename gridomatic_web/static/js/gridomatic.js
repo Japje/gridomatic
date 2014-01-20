@@ -14,25 +14,34 @@ $.ajaxSetup({
 	}
 })
 
-function wait_for_task(data) {
+function wait_for_task(data, cb) {
 	var url = '/ajax/task/status/%s/'
-	console.log(data)
-	$().djcelery({task_id: data.task_id, on_success: function() {
+	$().djcelery({task_id: data.task_id, on_success: cb})
+}
+
+function wait_then_refresh(data) {
+	wait_for_task(data, function() {
 		window.location.reload(true)
-	}})
+	})
+}
+
+function wait_then_goto(data, url) {
+	wait_for_task(data, function() {
+		window.location.href = url
+	})
 }
 
 $(document).ready(function() {
 	$('.vm-start').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/start/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
+		$.post('/vm/start/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 
 	$('.vm-stop').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/stop/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
+		$.post('/vm/stop/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 
 	$('.vm-destroy').click(function() {
@@ -44,6 +53,6 @@ $(document).ready(function() {
 	$('.vm-restart').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/restart/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
+		$.post('/vm/restart/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 })

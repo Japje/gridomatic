@@ -65,7 +65,7 @@ jQuery.fn.djcelery = function(options) {
     $(document).ready(function(){
         if (url !== '') {
             setTimeout(check_status, 0);
-            interval_id = setInterval(check_status, options.check_interval);
+            interval_id = setInterval(check_status, 1000);
         } else {
             number_of_errors = 3;
             handle_error();

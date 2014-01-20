@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block content %}
+<h3>Creating VM...</h3>
+<div id="spin">
+	
+</div>
+
+{% endblock%}
+
+{% block extra_head %}
+<script>
+$(document).ready(function(){
+	$('#spin').spin('large')
+	wait_then_goto({task_id: '{{ task_id}}'}, '{% url 'vm_list' %}')
+})
+</script>
+{% endblock%}
