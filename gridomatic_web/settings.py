@@ -116,6 +116,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
+# Puppet
+
+PUPPETMASTER_HOST = 'puppetmaster.srv.example.com'
 
 try:
 	from local_settings import *

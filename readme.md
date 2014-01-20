@@ -2,6 +2,41 @@
 
 Webinterface for XenServer
 
+## Supported features:
+* Limited to a single server or pool
+* Using xe-automator, provision network, hostname, ssh-key, puppet-certs
+
+##### List running VM's
+* Filtered by tag(s)
+
+##### Actions
+* Start/Stop/Restart/Edit/Destroy VM's
+
+
+##### Create new VM:
+* Set static IP for VM
+* Set static IPv6 for VM (limited)             
+* Select template (only ubuntu 12.04 LTS for now)
+* Select network
+* Select host (if in pool)
+* Set Memory amount      
+* Set vCPU amount
+* Set SSH key for user root
+
+##### Edit VM:
+* Description
+* Memory Size
+* vCPU amount
+
+##### Create new Network:
+* Name
+* Description
+* Vlan
+
+##### Edit Network:
+* Name
+* Description
+
 ## Installation
 
 	git clone https://github.dtc.avira.com/japje/gridomatic.git
