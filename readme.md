@@ -39,7 +39,7 @@ Webinterface for XenServer
 
 ## Installation
 
-	git clone https://github.dtc.avira.com/japje/gridomatic.git
+	git clone https://github.com/Japje/gridomatic.git
 	cd gridomatic
 	mkvirtualenv gridomatic
 	pip install -r req.txt
