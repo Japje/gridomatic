@@ -156,9 +156,9 @@ class Xen():
 
 
 	def vm_deploy(self, options):
-		name           = options['hostname'],
-		hostname       = options['hostname'][0],
-		(name, domain) = name[0].split('.', 1)
+		name           = options['hostname']
+		hostname       = options['hostname']
+		(name, domain) = name.split('.', 1)
 
 		# Get the host -> PBD -> SR on which we will copy the template
 		host_ref = self.session.xenapi.host.get_by_name_label(options['host'])
