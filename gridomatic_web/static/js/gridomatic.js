@@ -31,6 +31,10 @@ function wait_then_goto(data, url) {
 	})
 }
 
+function redir_vm_list() {
+		window.location.href = '/vm/list/'
+}
+
 $(document).ready(function() {
 	$('.vm-start').click(function() {
 		$(this).parent().spin('small')
@@ -47,7 +51,8 @@ $(document).ready(function() {
 	$('.vm-destroy').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") },	wait_for_task)
+		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") })
+		setTimeout('redir_vm_list()', 1000);
 	})
 
 	$('.vm-restart').click(function() {

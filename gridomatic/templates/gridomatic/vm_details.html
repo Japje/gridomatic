@@ -6,8 +6,8 @@
 {% block content %}
 <h3>VM Details for {{ details.name_label }}</h3>
 
-<a href="{% url "vm_edit" details.uuid %}" class="btn btn-success" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit VM Settings</a>
-<input type="button" method="POST" data-uuid="{{ details.uuid }}" class="btn btn-danger  vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
+<a href="{% url "vm_edit" details.uuid %}" class="btn btn-xs btn-success" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
+<input type="button" data-uuid="{{ details.uuid }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
 
 <hr>
 

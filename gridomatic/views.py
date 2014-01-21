@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 from django.conf import settings
 from forms import *
 from .xen import Xen
@@ -48,9 +48,12 @@ def vm_stop(request):
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def vm_destroy(request):
-        uuid = request.POST.get('uuid', None)
-	tasks.vm_destroy(uuid).id
-	return redirect('vm_list')
+	if request.method == "POST":
+		uuid = request.POST.get('uuid', None)
+		Xen().vm_destroy(uuid)
+		return redirect('vm_list')
+	else:
+		return HttpResponseNotAllowed('Only POST here')
 
 def vm_restart(request):
 	uuid = request.POST.get('uuid', None)
