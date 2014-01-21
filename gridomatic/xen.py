@@ -221,6 +221,16 @@ class Xen():
 		mem    = str(intmem)
 		self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
 
+		# Set backup flag in customfield
+		if options['backup'] is True:
+			backup_value = '1'
+		else:
+			backup_value = '0'
+	
+		self.session.xenapi.VM.add_to_other_config(vm_ref, 'XenCenter.CustomFields.backup', backup_value)
+
+		self.session.xenapi.VM.set_name_description(vm_ref, str(options['description']))
+
 		# Set PV args		
 		self.session.xenapi.VM.set_PV_args(vm_ref, '-- console=hvc')
 
@@ -235,6 +245,16 @@ class Xen():
 		vm_ref        = self.session.xenapi.VM.get_by_uuid(uuid)
 		cur_cpu_cores = int(self.session.xenapi.VM.get_VCPUs_max(vm_ref))
 
+		other_data = {}
+		if fields['backup'] is True:
+			other_data['XenCenter.CustomFields.backup'] = '1'
+		else:
+			other_data['XenCenter.CustomFields.backup'] = '0'
+	
+		self.session.xenapi.VM.set_other_config(vm_ref, other_data)
+		
+
+
 		if cur_cpu_cores >= cpu_cores:
 			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
 			self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
@@ -243,6 +263,7 @@ class Xen():
 			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
 	
 		self.session.xenapi.VM.set_memory_limits(vm_ref, str(memory), str(memory), str(memory),str(memory))
+
 		self.session.xenapi.VM.set_name_description(vm_ref, description)
 
 

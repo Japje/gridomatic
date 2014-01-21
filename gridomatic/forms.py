@@ -2,6 +2,7 @@ from django import forms
 
 class VMCreateForm(forms.Form):
 	hostname    = forms.CharField()
+	description = forms.CharField(help_text="Please provide a detailed description")
 
 	ip_address  = forms.GenericIPAddressField(protocol='ipv4', label="IP Address") 
 	netmask     = forms.GenericIPAddressField(protocol='ipv4')
@@ -22,6 +23,7 @@ class VMCreateForm(forms.Form):
 
 	sshkey      = forms.CharField(help_text="In OpenSSH format", label="SSH Public Key")
 
+	backup      = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups")
 
 class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network")
@@ -32,6 +34,7 @@ class VMEditForm(forms.Form):
 	description = forms.CharField(help_text="Please provide a detailed description", label="Description")
 	mem_size    = forms.IntegerField(label="Memory Size", help_text="Size in MB", min_value=128)
 	cpu_cores   = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
+	backup      = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups", required=False,)
 
 class NetworkEditForm(forms.Form):
 	name          = forms.CharField(help_text="Please provide a name")

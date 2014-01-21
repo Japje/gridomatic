@@ -18,9 +18,16 @@ def vm_details(request, uuid):
 
 def vm_edit(request, uuid):
 	details = Xen().vm_details(uuid)
+	backup = False
+
+	if 'XenCenter.CustomFields.backup' in details['other_config']:
+		if details['other_config']['XenCenter.CustomFields.backup'] == '1':
+			backup = True
+
 	form = VMEditForm(request.POST or None, initial={
 		'description': details['name_description'],
 		'cpu_cores':   details['VCPUs_at_startup'],
+		'backup':      backup,
 		'mem_size':    int(details['memory_static_max'])/1024/1024,
 	})
 
