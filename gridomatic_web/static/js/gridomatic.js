@@ -51,8 +51,7 @@ $(document).ready(function() {
 	$('.vm-destroy').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") })
-		setTimeout('redir_vm_list()', 1000);
+		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") }, function(data) {wait_then_goto(data, '/vm/list/') } )
 	})
 
 	$('.vm-restart').click(function() {

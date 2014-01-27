@@ -144,7 +144,7 @@ class Xen():
 			self.session.xenapi.VM.destroy(ref)
 		except:
 			pass
-	
+
 
 	def vm_restart(self, uuid):
 		ref = self.session.xenapi.VM.get_by_uuid(uuid)

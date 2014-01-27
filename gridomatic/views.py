@@ -48,12 +48,9 @@ def vm_stop(request):
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def vm_destroy(request):
-	if request.method == "POST":
-		uuid = request.POST.get('uuid', None)
-		Xen().vm_destroy(uuid)
-		return redirect('vm_list')
-	else:
-		return HttpResponseNotAllowed('Only POST here')
+	uuid = request.POST.get('uuid', None)
+	task_id = tasks.vm_destroy.delay(uuid).id
+	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
 def vm_restart(request):
 	uuid = request.POST.get('uuid', None)
