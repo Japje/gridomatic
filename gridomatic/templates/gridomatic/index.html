@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load json2html %}
+{% load url from future %}
+
+{% block content %}
+
+<h3>Welcome to the Grid-o-Matic interface</h3>
+
+<hr>
+
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="">
+          Pools
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+			{% for pool in hosts %}
+			<p><strong>{{ pool.pool }}</strong></p>
+			<ul>
+				{% if pool.host %}
+					<li>{{ pool.host }}</li>
+				{% endif %}
+			</ul>
+			{% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#">
+          To be done
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse in">
+      <div class="panel-body">
+
+		<p> text </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock%}

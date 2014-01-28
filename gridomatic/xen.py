@@ -305,3 +305,4 @@ class Xen():
 		data['pub_cert'] = pub
 		data['prv_cert'] = prv
 		return data
+

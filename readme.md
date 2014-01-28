@@ -3,7 +3,7 @@
 Webinterface for XenServer
 
 ## Supported features:
-* Limited to a single server or pool
+* Multi server/pool support
 * Using xe-automator, provision network, hostname, ssh-key, puppet-certs
 
 ##### List running VM's
@@ -22,6 +22,7 @@ Webinterface for XenServer
 * Set Memory amount      
 * Set vCPU amount
 * Set SSH key for user root
+* Select if you want backups (Using XenBackup)
 
 ##### Edit VM:
 * Description

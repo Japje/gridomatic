@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+
+<h3>Login</h3>
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form action="" method="post" class="form-horizontal" role="form">
+ {% csrf_token %}
+ {% bootstrap_form form layout="horizontal" %}
+ {% buttons submit='OK' reset='Cancel' layout='horizontal' %}{% endbuttons %}
+</form>
+
+{% endblock %}
