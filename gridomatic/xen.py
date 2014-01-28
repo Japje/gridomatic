@@ -3,20 +3,22 @@ import XenAPI
 import sh
 
 class Xen():
-	def __init__(self):
+	def __init__(self, poolname):
 		try:
-			session = XenAPI.Session(settings.XEN_URL)
-			session.xenapi.login_with_password(settings.XEN_USER, settings.XEN_PASSWORD)
+			session = XenAPI.Session(settings.XENPOOLS[poolname]['url'])
+			session.xenapi.login_with_password(settings.XENPOOLS[poolname]['user'], settings.XENPOOLS[poolname]['password'])
 		except Exception, e:
 			if e.details[0] == 'HOST_IS_SLAVE':
 				# Redirect to cluster master
 				url = urlparse(url).scheme + '://' + e.details[1]
 				session = XenAPI.Session(url)
-				session.login_with_password(settings.XEN_USER, settings.XEN_PASSWORD)
+				session.login_with_password(settings.XENPOOLS[poolname]['user'], settings.XENPOOLS[poolname]['password'])
 			else:
 				raise Exception(e)
 		self.session = session
 
+	def poolname(self):
+		pass
 
 	def get_network_list(self):
 		networks = self.session.xenapi.network.get_all_records()

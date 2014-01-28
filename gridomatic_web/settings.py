@@ -107,9 +107,18 @@ STATICFILES_DIRS = (
 )
 
 # XEN
-XEN_URL      = 'http://node1-c1.srv.example.com'
-XEN_USER     = 'root'
-XEN_PASSWORD = '***'
+XENPOOLS = {
+	'cluster1': {
+		'url':      'https://server1-cluster1.example.com',
+		'user':     'root',
+		'password': 'password',
+	},
+	'cluster2': {
+		'url':      'https://server1-cluster2.example.com',
+		'user':     'root',
+		'password': 'password',
+	}
+}
 
 # Celery
 CELERY_ACCEPT_CONTENT = ['json']

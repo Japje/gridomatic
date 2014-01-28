@@ -1,0 +1,10 @@
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+		Virtual Machines <b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu">
+			{% for pool in pools %}
+			<li><a href="{% url "vm_list" pool %}">{{ pool|capfirst }}</a></li>
+			{% endfor %}
+	</ul>
+</li>

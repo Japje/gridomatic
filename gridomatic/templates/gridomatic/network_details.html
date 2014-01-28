@@ -2,11 +2,12 @@
 
 {% load i18n %}
 {% load json2html %}
+{% load url from future %}
 
 {% block content %}
 <h3>VM Details for {{ details.name_label }}</h3>
 
-<a href="{% url "network_edit" details.uuid %}" class="btn btn-success">Edit Network Settings</a>
+<a href="{% url "network_edit" poolname details.uuid %}" class="btn btn-success">Edit Network Settings</a>
 
 <hr>
 

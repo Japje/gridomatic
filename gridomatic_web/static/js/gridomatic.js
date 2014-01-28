@@ -31,32 +31,28 @@ function wait_then_goto(data, url) {
 	})
 }
 
-function redir_vm_list() {
-		window.location.href = '/vm/list/'
-}
-
 $(document).ready(function() {
 	$('.vm-start').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/start/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
+		$.post('../../../vm/start/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 
 	$('.vm-stop').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/stop/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
+		$.post('../../../vm/stop/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 
 	$('.vm-destroy').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/destroy/', { 'uuid': $(this).attr("data-uuid") }, function(data) {wait_then_goto(data, '/vm/list/') } )
+		$.post('../../../vm/destroy/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, function(data) {wait_then_goto(data, '../../../vm/list/') } )
 	})
 
 	$('.vm-restart').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('/vm/restart/', { 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
+		$.post('../../../vm/restart/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, wait_then_refresh)
 	})
 })

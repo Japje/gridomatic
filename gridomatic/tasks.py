@@ -3,21 +3,21 @@ from celery import shared_task
 from .xen import *
 
 @shared_task
-def vm_start(uuid):
-	Xen().vm_start(uuid)
+def vm_start(poolname,uuid):
+	Xen(poolname).vm_start(uuid)
 
 @shared_task
-def vm_stop(uuid):
-	Xen().vm_stop(uuid)
+def vm_stop(poolname,uuid):
+	Xen(poolname).vm_stop(uuid)
 
 @shared_task
-def vm_restart(uuid):
-	Xen().vm_restart(uuid)
+def vm_restart(poolname,uuid):
+	Xen(poolname).vm_restart(uuid)
 
 @shared_task
-def vm_destroy(uuid):
-	Xen().vm_destroy(uuid)
+def vm_destroy(poolname,uuid):
+	Xen(poolname).vm_destroy(uuid)
 
 @shared_task
-def vm_deploy(options):
-	Xen().vm_deploy(options)
+def vm_deploy(poolname,options):
+	Xen(poolname).vm_deploy(options)

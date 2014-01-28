@@ -2,6 +2,7 @@
 
 {% load bootstrap3 %}
 {% load i18n %}
+{% load url from future %}
 
 {% block content %}
 <h3>Creating VM...</h3>
@@ -15,7 +16,7 @@
 <script>
 $(document).ready(function(){
 	$('#spin').spin('large')
-	wait_then_goto({task_id: '{{ task_id}}'}, '{% url 'vm_list' %}')
+	wait_then_goto({task_id: '{{ task_id}}'}, '{% url 'vm_list' poolname %}')
 })
 </script>
 {% endblock%}

@@ -2,18 +2,20 @@
 
 {% load i18n %}
 {% load json2html %}
+{% load url from future %}
 
 {% block content %}
+
 <h3>VM Details for {{ details.name_label }}</h3>
 
 {% if details.power_state == 'Halted' or details.power_state == 'Paused' or details.power_state == 'Suspended' %}
-   <input type="button" data-uuid="{{ details.uuid }}" class="btn btn-xs btn-success vm-start"   value="Start">
+   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-success vm-start"   value="Start">
 {% elif details.power_state == 'Running' %}
-   <input type="button" data-uuid="{{ details.uuid }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
-   <input type="button" data-uuid="{{ details.uuid }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
+   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
+   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
 {% endif %}
-   <a href="{% url "vm_edit" details.uuid %}" class="btn btn-xs btn-primary" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
-   <input type="button" data-uuid="{{ details.uuid }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
+   <a href="{% url "vm_edit" poolname details.uuid %}" data-poolname="{{ poolname }}" class="btn btn-xs btn-primary" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
+   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
 
 
 <hr>

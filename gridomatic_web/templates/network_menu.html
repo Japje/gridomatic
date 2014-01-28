@@ -1,0 +1,10 @@
+<li class="dropdown">
+	<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+		Networks <b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu">
+			{% for pool in pools %}
+			<li><a href="{% url "network_list" pool %}">{{ pool|capfirst }}</a></li>
+			{% endfor %}
+	</ul>
+</li>
