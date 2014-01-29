@@ -132,4 +132,5 @@ PUPPETMASTER_HOST = 'puppetmaster.srv.example.com'
 try:
 	from local_settings import *
 except ImportError:
+	print "error importing local settings"
 	pass

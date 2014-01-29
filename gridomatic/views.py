@@ -83,9 +83,14 @@ def vm_restart(request, poolname):
 def vm_create(request, poolname):
 	form = VMCreateForm(request.POST or None)
 	x = Xen(poolname)
-	form.fields['network'].choices  = x.get_network_list()
-	form.fields['template'].choices = x.get_template_list()
-	form.fields['host'].choices     = x.get_host_list()
+	networks = x.network_list()	
+	network_list = []
+	for net in networks:
+		network_list += [(net['uuid'], net['name'])]
+
+	form.fields['network'].choices  = sorted(network_list)
+	form.fields['template'].choices = sorted(x.get_template_list())
+	form.fields['host'].choices     = sorted(x.get_host_list())
 
 	if form.is_valid():
 		task_id = tasks.vm_deploy.delay(poolname,form.cleaned_data).id
@@ -94,7 +99,7 @@ def vm_create(request, poolname):
 
 @login_required
 def network_list(request, poolname):
-	network_list = Xen(poolname).network_list_dev()
+	network_list = Xen(poolname).network_list()
 	return render(request, 'gridomatic/network_list.html', {'networks': network_list, 'poolname': poolname})
 
 @login_required

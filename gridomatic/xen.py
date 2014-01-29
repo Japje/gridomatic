@@ -17,20 +17,7 @@ class Xen():
 				raise Exception(e)
 		self.session = session
 
-	def poolname(self):
-		pass
-
-	def get_network_list(self):
-		networks = self.session.xenapi.network.get_all_records()
-		network_list = []
-
-		for net in networks:
-			if not 'Production' in networks[net]['tags']: continue
-			network_list += [(networks[net]['uuid'], networks[net]['name_label'])]
-		return network_list
-
-
-	def network_list_dev(self):
+	def network_list(self):
 		networks = self.session.xenapi.network.get_all_records()
 		network_list = []
 
@@ -141,9 +128,35 @@ class Xen():
 
 
 	def vm_destroy(self, uuid):
-		ref = self.session.xenapi.VM.get_by_uuid(uuid)
+		# Before destroying the VM, first destroy all the Disks and network interfaces the VM has.
+		vm_ref = self.session.xenapi.VM.get_by_uuid(uuid)
+		vm_details = self.session.xenapi.VM.get_record(vm_ref)
+		vbds = vm_details['VBDs']
+		vifs = vm_details['VIFs']
+
+		# Loop through all the VBDs
+		for vbd_ref in vbds:
+			# Each VDB contains a VDI and also has to be destroyed
+			vbd_records = self.session.xenapi.VBD.get_record(vbd_ref)
+			vdi_records = self.session.xenapi.VBD.get_VDI(vbd_ref)
+			try:
+				self.session.xenapi.VDI.destroy(vdi_ref)
+			except:
+				pass
+
+			try:
+				self.session.xenapi.VBD.destroy(vbd_ref)
+			except:
+				pass
+
+		# Loop through all the VIFs
+		for vif_ref in vifs:
+			try:
+				self.session.xenapi.VIF.destroy(vif_ref)
+			except:
+				pass
 		try:
-			self.session.xenapi.VM.destroy(ref)
+			self.session.xenapi.VM.destroy(vm_ref)
 		except:
 			pass
 
