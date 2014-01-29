@@ -138,7 +138,7 @@ class Xen():
 		for vbd_ref in vbds:
 			# Each VDB contains a VDI and also has to be destroyed
 			vbd_records = self.session.xenapi.VBD.get_record(vbd_ref)
-			vdi_records = self.session.xenapi.VBD.get_VDI(vbd_ref)
+			vdi_ref = self.session.xenapi.VBD.get_VDI(vbd_ref)
 			try:
 				self.session.xenapi.VDI.destroy(vdi_ref)
 			except:
