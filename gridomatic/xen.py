@@ -319,3 +319,7 @@ class Xen():
 		data['prv_cert'] = prv
 		return data
 
+
+	def host_details(self, host_ref):
+		host_details = self.session.xenapi.host.get_record(host_ref)
+		return host_details

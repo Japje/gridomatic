@@ -23,15 +23,18 @@ def index(request):
 
 @login_required
 def vm_list(request,poolname):
-	return render(request, 'gridomatic/vm_list.html', {'vms': Xen(poolname).vm_list(), 'poolname': poolname})
+	return render(request, 'gridomatic/vm_list.html', {'vms': sorted(Xen(poolname).vm_list()), 'poolname': poolname})
 
 @login_required
 def vm_details(request, poolname, uuid):
 	details  = Xen(poolname).vm_details(uuid)
 	networks = Xen(poolname).network_names(details['VIFs']) 
 	disks    = Xen(poolname).disks_by_vdb(details['VBDs']) 
-	
-	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks, 'disks': disks, 'poolname': poolname})
+	if details['power_state'] is 'Running':
+		host  = Xen(poolname).host_details(details['resident_on'])
+	else:
+		host  = Xen(poolname).host_details(details['affinity'])   
+	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks, 'disks': disks, 'poolname': poolname, 'host': host })
 
 @login_required
 def vm_edit(request,  poolname, uuid):
