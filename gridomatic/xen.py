@@ -197,7 +197,8 @@ class Xen():
 		#self.session.xenapi.VIF.create(records)
 
 		# Let the puppetmaster generate a cert keys for the client, this is safer then having autosign enabled on the puppetmaster
-		puppet = self.puppet_gen_certs(hostname)
+		if options['puppet'] is True:
+			puppet = self.puppet_gen_certs(options['puppetmaster'],hostname)
 
 		# Data to go into xenstore_data
 		data = {}
@@ -218,11 +219,12 @@ class Xen():
 		if options['netmask6']:
 			data['vm-data/nm6'] = str(options['netmask6'])
 
-		if puppet['pub_cert']:
-			data['vm-data/puppet/pub'] = str(puppet['pub_cert'])
+		if options['puppet'] is True:
+			if puppet['pub_cert']:
+				data['vm-data/puppet/pub'] = str(puppet['pub_cert'])
 
-		if puppet['prv_cert']:
-			data['vm-data/puppet/prv'] = str(puppet['prv_cert'])
+			if puppet['prv_cert']:
+				data['vm-data/puppet/prv'] = str(puppet['prv_cert'])
 
 		# set the xenstore_data for the vm with above data
 		self.session.xenapi.VM.set_xenstore_data(vm_ref, data)
@@ -306,8 +308,7 @@ class Xen():
 			}]
 		return data
 
-	def puppet_gen_certs(self, hostname):
-		puppetmasterhost = settings.PUPPETMASTER_HOST
+	def puppet_gen_certs(self, puppetmasterhost,hostname):
 		puppetmaster     = sh.ssh.bake("root@"+puppetmasterhost)
 		puppetmaster("puppetca --generate "+str(hostname))
 

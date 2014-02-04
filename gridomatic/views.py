@@ -91,9 +91,18 @@ def vm_create(request, poolname):
 	for net in networks:
 		network_list += [(net['uuid'], net['name'])]
 
-	form.fields['network'].choices  = sorted(network_list)
-	form.fields['template'].choices = sorted(x.get_template_list())
-	form.fields['host'].choices     = sorted(x.get_host_list())
+	masters = settings.PUPPETMASTERS
+	puppetmaster_list = []
+	for master in masters:
+		puppetmaster_list += [(
+			masters[master]['hostname'],
+			master,
+		)]
+
+	form.fields['network'].choices      = sorted(network_list)
+	form.fields['template'].choices     = sorted(x.get_template_list())
+	form.fields['host'].choices         = sorted(x.get_host_list())
+	form.fields['puppetmaster'].choices = sorted(puppetmaster_list)
 
 	if form.is_valid():
 		task_id = tasks.vm_deploy.delay(poolname,form.cleaned_data).id

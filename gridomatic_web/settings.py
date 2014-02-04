@@ -127,7 +127,14 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 # Puppet
 
-PUPPETMASTER_HOST = 'puppetmaster.srv.example.com'
+PUPPETMASTERS = {
+   'puppetmaster-production': {
+      'hostname': '10.0.4.12',
+   },
+   'puppetmaster-development': {
+      'hostname': '10.0.5.15',
+   }
+}
 
 try:
 	from local_settings import *
