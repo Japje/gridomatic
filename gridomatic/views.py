@@ -101,7 +101,7 @@ def vm_create(request, poolname):
 
 	form.fields['network'].choices      = sorted(network_list)
 	form.fields['template'].choices     = sorted(x.get_template_list())
-	form.fields['host'].choices         = sorted(x.get_host_list())
+	form.fields['host'].choices         = sorted(x.get_host_list(), reverse=True)
 	form.fields['puppetmaster'].choices = sorted(puppetmaster_list)
 
 	if form.is_valid():

@@ -1,7 +1,7 @@
 from django import forms
 
 class VMCreateForm(forms.Form):
-	hostname     = forms.CharField()
+	hostname     = forms.CharField(label="FDQN Hostname")
 	description  = forms.CharField(help_text="Please provide a detailed description")
 
 	ip_address   = forms.GenericIPAddressField(protocol='ipv4', label="IP Address") 
@@ -18,14 +18,14 @@ class VMCreateForm(forms.Form):
 	network      = forms.ChoiceField(choices = [])
 	host         = forms.ChoiceField(choices = [])
 
-	mem_size     = forms.IntegerField(label="Memory Size", help_text="Size in MB", min_value=128)
+	mem_size     = forms.IntegerField(label="Memory Size (MB)", min_value=256, initial=256)
 	cpu_cores    = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
 
-	sshkey       = forms.CharField(help_text="In OpenSSH format", label="SSH Public Key")
+	sshkey       = forms.CharField(help_text="Public Key in OpenSSH format", label="SSH key")
 
-	backup       = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups", required=False)
-	puppet       = forms.BooleanField(help_text="Select if we should create a puppet certificate for this VM", label="Enable Puppet", required=False)
-	puppetmaster = forms.ChoiceField(choices = [], required=False)
+	backup       = forms.BooleanField(label="Create Backups using XenBackup", required=False)
+	puppet       = forms.BooleanField(label="Enable Puppet", required=False)
+	puppetmaster = forms.ChoiceField(choices = [], required=False, help_text="Will only be used if enabled")
 
 class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network")
@@ -34,7 +34,7 @@ class NetworkCreateForm(forms.Form):
 
 class VMEditForm(forms.Form):
 	description = forms.CharField(help_text="Please provide a detailed description", label="Description")
-	mem_size    = forms.IntegerField(label="Memory Size", help_text="Size in MB", min_value=128)
+	mem_size    = forms.IntegerField(label="Memory Size", help_text="Size in MB", min_value=256)
 	cpu_cores   = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
 	backup      = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups", required=False)
 
