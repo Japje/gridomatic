@@ -30,10 +30,10 @@ def vm_details(request, poolname, uuid):
 	details  = Xen(poolname).vm_details(uuid)
 	networks = Xen(poolname).network_names(details['VIFs']) 
 	disks    = Xen(poolname).disks_by_vdb(details['VBDs']) 
-	if details['power_state'] is 'Running':
+	if details['power_state'] == 'Running':
 		host  = Xen(poolname).host_details(details['resident_on'])
 	else:
-		host  = Xen(poolname).host_details(details['affinity'])   
+		host  = {'name_label': 'Not implemented for stopped VMs yet'}
 	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks, 'disks': disks, 'poolname': poolname, 'host': host })
 
 @login_required
@@ -120,7 +120,7 @@ def network_create(request, poolname):
 
 	if form.is_valid():
 		Xen(poolname).network_create(form.cleaned_data)
-		return redirect('network_list')
+		return redirect('network_list',poolname)
 	return render(request, 'gridomatic/network_create.html', {'form': form})
 
 @login_required

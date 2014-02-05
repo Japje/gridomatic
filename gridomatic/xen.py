@@ -192,9 +192,28 @@ class Xen():
 		self.session.xenapi.VM.set_is_a_template(vm_ref, False)
 
 		# TODO create and attach VIF
-		network        = options['network'],
-		#vif-create vm-uuid=${VMUUID} network-uuid=$NETWORKUUID mac=random device=0
-		#self.session.xenapi.VIF.create(records)
+		network_ref  = self.session.xenapi.network.get_by_uuid(options['network'])
+
+		template_vif = self.session.xenapi.VM.get_VIFs(vm_ref)
+
+		for vif in template_vif:
+			self.session.xenapi.VIF.destroy(vif)
+
+		vif_config   = { 
+			'device': '0',
+			'network': network_ref,
+			'VM': vm_ref,
+			'MAC': '',
+			'MTU': '1500',
+			'qos_algorithm_type': '',
+			'qos_algorithm_params': {},
+			'other_config': {} 
+		}
+
+		try:
+			self.session.xenapi.VIF.create(vif_config)
+		except Exception, e:
+			raise Exception(e)
 
 		# Let the puppetmaster generate a cert keys for the client, this is safer then having autosign enabled on the puppetmaster
 		if options['puppet'] is True:
