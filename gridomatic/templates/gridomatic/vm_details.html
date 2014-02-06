@@ -6,26 +6,29 @@
 
 {% block content %}
 
-<h3>VM Details for {{ details.name_label }}</h3>
+<h3>VM vmdetails</h3>
 
-{% if details.power_state == 'Halted' or details.power_state == 'Paused' or details.power_state == 'Suspended' %}
-   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-success vm-start"   value="Start">
-{% elif details.power_state == 'Running' %}
-   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
-   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
+{% for item in vmdetails %}
+
+{% if item.powerstate == 'Halted' or item.powerstate == 'Paused' or item.powerstate == 'Suspended' %}
+   <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-success vm-start"   value="Start">
+{% elif item.powerstate == 'Running' %}
+   <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
+   <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
 {% endif %}
-   <a href="{% url "vm_edit" poolname details.uuid %}" data-poolname="{{ poolname }}" class="btn btn-xs btn-primary" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
-   <input type="button" data-uuid="{{ details.uuid }}" data-poolname="{{ poolname }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not details.power_state == 'Halted' %}disabled="disabled"{% endif %}>
-
+   <a href="{% url "vm_edit" item.poolname item.uuid %}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-primary" {% if not item.powerstate == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
+   <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not item.powerstate == 'Halted' %}disabled="disabled"{% endif %}>
 
 <hr>
+
+
 
 <div class="panel-group" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          Simple Details
+          {{ item.name }}
         </a>
       </h4>
     </div>
@@ -35,27 +38,28 @@
          <table class="table table-striped table-condensed table-hover">
             <thead>
                <tr>
-                  <th>Name</th><th>Value</th>
+                  <th>Item</th><th>Value</th>
                </tr>
             </thead>
             <tbody>
-					<tr><td>Description</td><td>{{ details.name_description }}</td></tr>
-					<tr><td>UUID</td><td>{{ details.uuid }}</td></tr>
-					<tr><td>Powerstate</td><td>{{ details.power_state }}</td></tr>
-					<tr><td>Cores</td><td>{{ details.VCPUs_at_startup }}</td></tr>
-					<tr><td>Memory</td><td>{{ details.memory_static_max|filesizeformat }}</td></tr>
-					<tr><td>Tags</td><td>{{ details.tags|json2html }}</td></tr>
+					<tr><td>Name</td><td>{{ item.name }}</td></tr>
+					<tr><td>Description</td><td>{{ item.description }}</td></tr>
+					<tr><td>UUID</td><td>{{ item.uuid }}</td></tr>
+					<tr><td>Powerstate</td><td>{{ item.powerstate }}</td></tr>
+					<tr><td>Cores</td><td>{{ item.vcpus }}</td></tr>
+					<tr><td>Memory</td><td>{{ item.memory|filesizeformat }}</td></tr>
+					<tr><td>Tags</td><td>{{ item.tags|json2html }}</td></tr>
 					<tr><td>Networks</td><td><ul>
-						{% for network in networks %}
-							{{ network.name }}</br>
+						{% for network in item.networks %}
+							<li><a href="{% url "network_details" item.poolname network.uuid %}" > {{network.name }}</a></li>
 						{% endfor %}
 					</ul></td></tr>
 					<tr><td>Disks</td><td><ul>
-						{% for disk in disks %}
+						{% for disk in item.disks %}
 							<li>[{{ disk.name }}] - Size: {{ disk.size|filesizeformat }}</li>
 						{% endfor %}
 					</ul></td></tr>
-					<tr><td>Host</td><td>{{ host.name_label }}</td></tr>
+					<tr><td>Host</td><td>{{ item.host }}</td></tr>
             </tbody>
          </table>
 
@@ -63,39 +67,7 @@
       </div>
     </div>
   </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-          Advanced Details
-        </a>
-      </h4>
-    </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
-      <div class="panel-body">
-
-			<table class="table table-striped table-condensed table-hover">
-				<thead>
-					<tr>
-						<th>Name</th><th>Value</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for key,value in details.items  %}
-					<tr>
-						<td>{{ key }}</td><td>{{ value|json2html }}</td><td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-
-      </div>
-    </div>
-  </div>
 </div>
-
-
-
-
+{% endfor %}
 
 {% endblock%}

@@ -7,6 +7,8 @@ from .xen import Xen
 import json
 import tasks
 
+# mainpage
+
 def index(request):
 	pools = settings.XENPOOLS
 	host_list = []
@@ -21,20 +23,57 @@ def index(request):
 			}]
 	return render(request, 'gridomatic/index.html', {'hosts': host_list})
 
+# vm views
+
 @login_required
-def vm_list(request,poolname):
-	return render(request, 'gridomatic/vm_list.html', {'vms': sorted(Xen(poolname).vm_list()), 'poolname': poolname})
+def vm_list(request, poolname):
+	data = []
+	vms = Xen(poolname).vm_list()
+
+	for ref,vm in vms.items():
+		if vm["is_a_template"] or vm['is_a_snapshot'] or vm["is_control_domain"]: continue
+		data += [{
+			'name':        vm['name_label'],
+			'power_state': vm['power_state'],
+			'uuid':        vm['uuid'],
+			'poolname': poolname,
+		}]
+
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'vmlist': sorted(data)}))
+	else:
+		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted(data)})
+
 
 @login_required
 def vm_details(request, poolname, uuid):
 	details  = Xen(poolname).vm_details(uuid)
-	networks = Xen(poolname).network_names(details['VIFs']) 
-	disks    = Xen(poolname).disks_by_vdb(details['VBDs']) 
+
 	if details['power_state'] == 'Running':
 		host  = Xen(poolname).host_details(details['resident_on'])
 	else:
 		host  = {'name_label': 'Not implemented for stopped VMs yet'}
-	return render(request, 'gridomatic/vm_details.html', {'details': details, 'networks': networks, 'disks': disks, 'poolname': poolname, 'host': host })
+
+	data = []
+	data += [{
+			'name': details['name_label'],
+			'description': details['name_description'],
+			'poolname': poolname,
+			'host':  host['name_label'],
+			'uuid':  details['uuid'],
+			'powerstate':  details['power_state'],
+			'vcpus':  details['VCPUs_at_startup'],
+			'memory': details['memory_static_max'],
+			'tags': details['tags'],
+			'disks': Xen(poolname).disks_by_vdb(details['VBDs']),
+			'networks': Xen(poolname).network_details_ref(details['VIFs']),
+	}]
+
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'vmdetails': data}))
+	else:
+		return render(request, 'gridomatic/vm_details.html', {'vmdetails': data})
+
 
 @login_required
 def vm_edit(request,  poolname, uuid):
@@ -58,11 +97,13 @@ def vm_edit(request,  poolname, uuid):
 
 	return render(request, 'gridomatic/vm_edit.html', {'details': details, 'form': form, 'poolname': poolname})
 
+
 @login_required
 def vm_start(request, poolname):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_start.delay(poolname,uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
+
 
 @login_required
 def vm_stop(request, poolname):
@@ -70,17 +111,20 @@ def vm_stop(request, poolname):
 	task_id = tasks.vm_stop.delay(poolname,uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
+
 @login_required
 def vm_destroy(request, poolname):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_destroy.delay(poolname,uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
 
+
 @login_required
 def vm_restart(request, poolname):
 	uuid = request.POST.get('uuid', None)
 	task_id = tasks.vm_restart.delay(poolname,uuid).id
 	return HttpResponse(json.dumps({'task_id': task_id}), content_type="application/json")
+
 
 @login_required
 def vm_create(request, poolname):
@@ -109,10 +153,28 @@ def vm_create(request, poolname):
 		return render(request, 'gridomatic/vm_create_wait.html', {'form': form, 'task_id': task_id, 'poolname': poolname})
 	return render(request, 'gridomatic/vm_create.html', {'form': form, 'poolname': poolname})
 
+
+# Network views
+
 @login_required
 def network_list(request, poolname):
-	network_list = Xen(poolname).network_list()
-	return render(request, 'gridomatic/network_list.html', {'networks': network_list, 'poolname': poolname})
+	data = []
+	networks = Xen(poolname).network_list()
+
+	for ref, net in networks.items():
+		if not 'Production' in net['tags']: continue
+		data += [{
+			'name':        net['name_label'],
+			'description': net['name_description'],
+			'uuid':        net['uuid'],
+			'poolname':    poolname,
+		}]
+
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'networklist': sorted(data)}))
+	else:
+		return render(request, 'gridomatic/network_list.html', {'networklist': sorted(data)})
+
 
 @login_required
 def network_create(request, poolname):
@@ -123,17 +185,33 @@ def network_create(request, poolname):
 		return redirect('network_list',poolname)
 	return render(request, 'gridomatic/network_create.html', {'form': form})
 
+
 @login_required
 def network_details(request, poolname, uuid):
-	details = Xen(poolname).network_details(uuid)
+	details = Xen(poolname).network_details_uuid(uuid)
 	vifs = details['VIFs']
-	vms = Xen(poolname).vmnames_by_vif(vifs) 
-	return render(request, 'gridomatic/network_details.html', {'details': details, 'vms': vms, 'poolname': poolname })
+	vms = Xen(poolname).vmdetails_by_vif(vifs)
+	data = []
+
+	data += [{
+         'name': details['name_label'],
+         'description': details['name_description'],
+			'uuid':  details['uuid'],
+			'mtu':  details['MTU'],
+			'tags':  details['tags'],
+			'vms': vms,
+			'poolname': poolname,
+	}]
+
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'networkdetails': sorted(data)}))
+	else:
+		return render(request, 'gridomatic/network_details.html', {'networkdetails': sorted(data)})
 
 
 @login_required
 def network_edit(request, poolname, uuid):
-	details = Xen(poolname).network_details(uuid)
+	details = Xen(poolname).network_details_uuid(uuid)
 	form = NetworkEditForm(request.POST or None, initial={
 		'name': details['name_label'],
 		'description': details['name_description'],

@@ -18,17 +18,11 @@ class Xen():
 		self.session = session
 
 	def network_list(self):
-		networks = self.session.xenapi.network.get_all_records()
-		network_list = []
-
-		for ref, net in networks.items():
-			if not 'Production' in net['tags']: continue
-			network_list += [{
-				'name':        net['name_label'],
-				'description': net['name_description'],
-				'uuid':        net['uuid'],
-			}]
-		return network_list
+		try:
+			networks = self.session.xenapi.network.get_all_records()
+		except:
+			pass
+		return networks
 
 
 	def network_create(self, options):
@@ -45,7 +39,7 @@ class Xen():
 		return True
 
 
-	def network_details(self, uuid):
+	def network_details_uuid(self, uuid):
 		network_ref = self.session.xenapi.network.get_by_uuid(uuid)
 		network_details = self.session.xenapi.network.get_record(network_ref)
 		return network_details
@@ -70,17 +64,11 @@ class Xen():
 	
 
 	def vm_list(self):
-		vms = self.session.xenapi.VM.get_all_records()
-		vm_list = []
-		for ref, vm in vms.items():
-			if vm["is_a_template"] or vm['is_a_snapshot'] or vm["is_control_domain"]: continue
-
-			vm_list += [{
-				'name':        vm['name_label'],
-				'power_state': vm['power_state'],
-				'uuid':        vm['uuid'],
-			}]
-		return vm_list
+		try:
+			vms = self.session.xenapi.VM.get_all_records()
+		except:
+			pass
+		return vms
 
 
 	def vm_details(self, uuid):
@@ -89,17 +77,18 @@ class Xen():
 		return vm_details
 
 
-	def network_names(self, vifs):
+	def network_details_ref(self, vifs):
 		names = []
 		for vif_ref in vifs:
 			net_ref = self.session.xenapi.VIF.get_network(vif_ref)
-			net_name = self.session.xenapi.network.get_name_label(net_ref)
+			net = self.session.xenapi.network.get_record(net_ref)
 			names += [{
-				'name':        net_name,
+				'name':        net['name_label'],
+				'uuid':        net['uuid'],
 			}]
 		return names
 
-	def vmnames_by_vif(self, vifs):
+	def vmdetails_by_vif(self, vifs):
 		names = []
 		for vif_ref in vifs:
 			vm_ref = self.session.xenapi.VIF.get_VM(vif_ref)
@@ -107,6 +96,7 @@ class Xen():
 			if not vm_records["is_a_template"]: 
 				names += [{
 					'name': vm_records["name_label"],
+					'uuid': vm_records["uuid"],
 				}]
 		return names
 
@@ -310,7 +300,6 @@ class Xen():
 		self.session.xenapi.network.set_name_label(network_ref, fields['name'])
 
 		data = {}
-		data['racktables_id'] = fields['racktables_id']
 		data['automatic']     = 'false'
 		self.session.xenapi.network.set_other_config(network_ref, data)
 

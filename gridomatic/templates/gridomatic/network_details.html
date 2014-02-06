@@ -5,11 +5,12 @@
 {% load url from future %}
 
 {% block content %}
-<h3>VM Details for {{ details.name_label }}</h3>
+<h3>Network Details</h3>
 
-<a href="{% url "network_edit" poolname details.uuid %}" class="btn btn-success">Edit Network Settings</a>
+<a href="{% url "network_edit" networkdetails.0.poolname networkdetails.0.uuid %}" class="btn btn-xs btn-success">Edit Network Settings</a>
 
 <hr>
+{% for item in networkdetails %}
 
 <div class="panel-group" id="accordion">
   <div class="panel panel-default">
@@ -30,13 +31,13 @@
                </tr>
             </thead>
             <tbody>
-					<tr><td>Description</td><td>{{ details.name_description }}</td></tr>
-					<tr><td>UUID</td><td>{{ details.uuid }}</td></tr>
-					<tr><td>MTU</td><td>{{ details.MTU }}</td></tr>
-					<tr><td>Tags</td><td>{{ details.tags|json2html }}</td></tr>
+					<tr><td>Description</td><td>{{ item.description }}</td></tr>
+					<tr><td>UUID</td><td>{{ item.uuid }}</td></tr>
+					<tr><td>MTU</td><td>{{ item.mtu }}</td></tr>
+					<tr><td>Tags</td><td>{{ item.tags|json2html }}</td></tr>
 					<tr><td>Attached to VMs:</td><td><ul>
-						{% for vm in vms %}
-							<li>{{ vm.name }}</li>
+						{% for vm in item.vms %}
+							<li><a href="{% url "vm_details" item.poolname vm.uuid %}" > {{ vm.name }}</a></li>
 						{% endfor %}
 					</ul></td></tr>
             </tbody>
@@ -46,39 +47,8 @@
       </div>
     </div>
   </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-          Advanced Details
-        </a>
-      </h4>
-    </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
-      <div class="panel-body">
-
-			<table class="table table-striped table-condensed table-hover">
-				<thead>
-					<tr>
-						<th>Name</th><th>Value</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for key,value in details.items  %}
-					<tr>
-						<td>{{ key }}</td><td>{{ value|json2html }}</td><td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-
-      </div>
-    </div>
-  </div>
 </div>
 
-
-
-
+{% endfor %}
 
 {% endblock%}

@@ -41,5 +41,3 @@ class VMEditForm(forms.Form):
 class NetworkEditForm(forms.Form):
 	name          = forms.CharField(help_text="Please provide a name")
 	description   = forms.CharField(help_text="Please provide a detailed description")
-	racktables_id = forms.CharField(help_text="network_id from racktables", label="Racktables ID")
-
