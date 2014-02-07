@@ -40,7 +40,7 @@ def vm_list(request, poolname):
 		}]
 
 	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'vmlist': sorted(data)}))
+		return HttpResponse(json.dumps({'vmlist': sorted(data)}), content_type = "application/json")
 	else:
 		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted(data)})
 
@@ -70,7 +70,7 @@ def vm_details(request, poolname, uuid):
 	}]
 
 	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'vmdetails': data}))
+		return HttpResponse(json.dumps({'vmdetails': data}), content_type = "application/json")
 	else:
 		return render(request, 'gridomatic/vm_details.html', {'vmdetails': data})
 
@@ -171,7 +171,7 @@ def network_list(request, poolname):
 		}]
 
 	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'networklist': sorted(data)}))
+		return HttpResponse(json.dumps({'networklist': sorted(data)}), content_type = "application/json")
 	else:
 		return render(request, 'gridomatic/network_list.html', {'networklist': sorted(data)})
 
@@ -204,7 +204,7 @@ def network_details(request, poolname, uuid):
 	}]
 
 	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'networkdetails': sorted(data)}))
+		return HttpResponse(json.dumps({'networkdetails': sorted(data)}), content_type = "application/json")
 	else:
 		return render(request, 'gridomatic/network_details.html', {'networkdetails': sorted(data)})
 
