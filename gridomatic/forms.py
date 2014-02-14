@@ -21,6 +21,7 @@ class VMCreateForm(forms.Form):
 	mem_size     = forms.IntegerField(label="Memory Size (MB)", min_value=256, initial=256)
 	cpu_cores    = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
 
+	password     = forms.CharField(help_text="Copy this password! It will NOT be shown again!")
 	sshkey       = forms.CharField(help_text="Public Key in OpenSSH format", label="SSH key")
 
 	backup       = forms.BooleanField(label="Create Backups using XenBackup", required=False)

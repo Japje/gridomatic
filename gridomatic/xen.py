@@ -211,12 +211,13 @@ class Xen():
 
 		# Data to go into xenstore_data
 		data = {}
-		data['vm-data/ip']     = str(options['ip_address'])
-		data['vm-data/gw']     = str(options['gateway'])
-		data['vm-data/nm']     = str(options['netmask'])
-		data['vm-data/ns']     = str(options['dns'])
-		data['vm-data/dm']     = str(domain)
-		data['vm-data/sshkey'] = str(options['sshkey'])
+		data['vm-data/ip']       = str(options['ip_address'])
+		data['vm-data/gw']       = str(options['gateway'])
+		data['vm-data/nm']       = str(options['netmask'])
+		data['vm-data/ns']       = str(options['dns'])
+		data['vm-data/dm']       = str(domain)
+		data['vm-data/sshkey']   = str(options['sshkey'])
+		data['vm-data/password'] = str(options['password'])
 
 		# Optional data
 		if options['ip_address6']:

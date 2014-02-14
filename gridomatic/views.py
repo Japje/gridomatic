@@ -6,6 +6,12 @@ from forms import *
 from .xen import Xen
 import json
 import tasks
+import string
+import random
+
+def gen_password(size=24, chars=string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for x in range(size))
+
 
 # mainpage
 
@@ -128,12 +134,16 @@ def vm_restart(request, poolname):
 
 @login_required
 def vm_create(request, poolname):
-	form = VMCreateForm(request.POST or None)
+	form = VMCreateForm(request.POST or None, initial={'password': gen_password()} )
 	x = Xen(poolname)
 	networks = x.network_list()	
 	network_list = []
 	for net in networks:
-		network_list += [(net['uuid'], net['name'])]
+		if not 'Production' in networks[net]['tags']: continue
+		network_list += [(
+			networks[net]['uuid'], 
+			networks[net]['name_label']
+		)]
 
 	masters = settings.PUPPETMASTERS
 	puppetmaster_list = []
