@@ -205,6 +205,17 @@ class Xen():
 		except Exception, e:
 			raise Exception(e)
 
+
+		vm_details = self.session.xenapi.VM.get_record(vm_ref)
+		vbds = vm_details['VBDs']
+		for vbd_ref in vbds:
+			# Each VDB contains a VDI
+			vbd_records = self.session.xenapi.VBD.get_record(vbd_ref)
+			if vbd_records['type'] == 'Disk':
+				vdi_ref = self.session.xenapi.VBD.get_VDI(vbd_ref)
+				self.session.xenapi.VDI.set_name_label(vdi_ref, hostname+' root')
+				self.session.xenapi.VDI.set_name_description(vdi_ref, 'Created by the Grid-o-Matic deployment tool')
+
 		# Let the puppetmaster generate a cert keys for the client, this is safer then having autosign enabled on the puppetmaster
 		if options['puppet'] is True:
 			puppet = self.puppet_gen_certs(options['puppetmaster'],hostname)
@@ -304,7 +315,7 @@ class Xen():
 		data['automatic']     = 'false'
 		self.session.xenapi.network.set_other_config(network_ref, data)
 
-        def disks_by_vdb(self, vbds):
+	def disks_by_vdb(self, vbds):
 		data = []
 		for vbd_ref in vbds:
 			vbd_records = self.session.xenapi.VBD.get_record(vbd_ref)
