@@ -6,6 +6,9 @@ urlpatterns = patterns('',
 
 	url(r'^$',                     index,    name='index'),
 
+	url(r'^vm/list/$',                     vm_list_combined,        name='vm_list_combined'),
+	url(r'^network/list/$',                network_list_combined,   name='network_list_combined'),
+
 	url(r'^pool/(?P<poolname>[^/]+)/vm/list/$',                     vm_list,    name='vm_list'),
 	url(r'^pool/(?P<poolname>[^/]+)/vm/start/$',                    vm_start,   name='vm_start'),
 	url(r'^pool/(?P<poolname>[^/]+)/vm/stop/$',                     vm_stop,    name='vm_stop'),

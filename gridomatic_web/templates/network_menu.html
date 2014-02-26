@@ -3,6 +3,7 @@
 		Networks <b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu">
+			<li><a href="{% url "network_list_combined" %}">All Pools</a></li>
 			{% for pool in pools %}
 			<li><a href="{% url "network_list" pool %}">{{ pool|capfirst }}</a></li>
 			{% endfor %}

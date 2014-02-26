@@ -7,17 +7,21 @@
 <h3>Virtual Machines</h3>
 <a href="{% url "vm_create" vmlist.0.poolname %}" class="btn btn-xs btn-success">Create new VM</a>
 <hr>
+
 <table class="table table-striped table-condensed table-hover">
 	<thead>
 		<tr>
-			<th>Name</th><th>Power State</th>
+			<th>Name</th><th>Powerstate</th><th>Poolname</th>
 		</tr>
 	</thead>
 	<tbody>
 
+
 	{% for vm in vmlist %}
 		<tr>
-			<td><a href="{% url "vm_details" vm.poolname vm.uuid %}" > {{ vm.name }}</a></td><td class="{% if vm.power_state = 'Running' %}text-success{% endif %}">{{ vm.power_state}}</td>
+			<td><a href="{% url "vm_details" vm.poolname vm.uuid %}" > {{ vm.name }}</a></td>
+			<td class="{% if vm.power_state = 'Running' %}text-success{% endif %}">{{ vm.power_state}}</td>
+			<td class="text-muted">{{ vm.poolname }}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

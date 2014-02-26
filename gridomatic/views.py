@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
+from operator import itemgetter
 from django.conf import settings
 from forms import *
 from .xen import Xen
@@ -49,6 +50,30 @@ def vm_list(request, poolname):
 		return HttpResponse(json.dumps({'vmlist': sorted(data)}), content_type = "application/json")
 	else:
 		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted(data)})
+
+
+@login_required
+def vm_list_combined(request):
+	data = []
+	pools = settings.XENPOOLS
+
+	for poolname in pools:
+		vms = Xen(poolname).vm_list()
+
+		for ref,vm in vms.items():
+			if vm["is_a_template"] or vm['is_a_snapshot'] or vm["is_control_domain"]: continue
+			data += [{
+				'name':        vm['name_label'],
+				'power_state': vm['power_state'],
+				'uuid':        vm['uuid'],
+				'poolname': poolname,
+			}]
+
+	sorted_data = sorted(data, key=itemgetter('name'))
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'vmlist': sorted_data}), content_type = "application/json")
+	else:
+		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted_data})
 
 
 @login_required
@@ -185,6 +210,28 @@ def network_list(request, poolname):
 	else:
 		return render(request, 'gridomatic/network_list.html', {'networklist': sorted(data)})
 
+def network_list_combined(request):
+	data = []
+	pools = settings.XENPOOLS
+
+	for poolname in pools:
+		networks = Xen(poolname).network_list()
+
+		for ref, net in networks.items():
+			if not 'Production' in net['tags']: continue
+			data += [{
+				'name':        net['name_label'],
+				'description': net['name_description'],
+				'uuid':        net['uuid'],
+				'poolname':    poolname,
+			}]
+
+	sorted_data = sorted(data, key=itemgetter('name'))
+	if 'json' in request.REQUEST:
+		return HttpResponse(json.dumps({'networklist': sorted_data }), content_type = "application/json")
+	else:
+		return render(request, 'gridomatic/network_list.html', {'networklist': sorted_data })
+
 
 @login_required
 def network_create(request, poolname):
@@ -225,7 +272,6 @@ def network_edit(request, poolname, uuid):
 	form = NetworkEditForm(request.POST or None, initial={
 		'name': details['name_label'],
 		'description': details['name_description'],
-		'racktables_id': details['other_config']['racktables_id'],
 	})
 
 	if form.is_valid():

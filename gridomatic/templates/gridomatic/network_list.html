@@ -11,13 +11,15 @@
 <table class="table table-striped table-condensed table-hover">
 <thead>
 <tr>
-<th>Name</th><th>Description</th>
+<th>Name</th><th>Description</th><th>Poolname</th>
 </tr>
 </thead>
 <tbody>
 {% for network in networklist  %}
 <tr>
-<td><a href="{% url "network_details" network.poolname network.uuid %}" > {{ network.name }}</a></td><td>{{ network.description }}</td><td>
+<td><a href="{% url "network_details" network.poolname network.uuid %}" > {{ network.name }}</a></td>
+<td>{{ network.description }}</td>
+<td class="text-muted">{{ network.poolname }}</td>
 </tr>
 {% endfor %}
 </tbody>
