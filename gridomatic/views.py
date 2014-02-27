@@ -42,26 +42,6 @@ def index(request):
 # vm views
 
 @login_required
-def vm_list(request, poolname):
-	data = []
-	vms = Xen(poolname).vm_list()
-
-	for ref,vm in vms.items():
-		if vm["is_a_template"] or vm['is_a_snapshot'] or vm["is_control_domain"]: continue
-		data += [{
-			'name':        vm['name_label'],
-			'power_state': vm['power_state'],
-			'uuid':        vm['uuid'],
-			'poolname': poolname,
-		}]
-
-	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'vmlist': sorted(data)}), content_type = "application/json")
-	else:
-		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted(data)})
-
-
-@login_required
 def vm_list_combined(request):
 
 	data = []
@@ -92,7 +72,7 @@ def vm_list_combined(request):
 	sorted_data = sorted(data, key=itemgetter('name'))
 
 	listtags = list(set(listtags))
-	form.fields['tags'].choices = listtags
+	form.fields['tags'].choices = sorted(listtags)
 
 	if 'json' in request.REQUEST:
 		return HttpResponse(json.dumps({'vmlist': sorted_data}), content_type = "application/json")
@@ -216,45 +196,41 @@ def vm_create(request, poolname):
 # Network views
 
 @login_required
-def network_list(request, poolname):
-	data = []
-	networks = Xen(poolname).network_list()
-
-	for ref, net in networks.items():
-		if not 'Production' in net['tags']: continue
-		data += [{
-			'name':        net['name_label'],
-			'description': net['name_description'],
-			'uuid':        net['uuid'],
-			'poolname':    poolname,
-		}]
-
-	if 'json' in request.REQUEST:
-		return HttpResponse(json.dumps({'networklist': sorted(data)}), content_type = "application/json")
-	else:
-		return render(request, 'gridomatic/network_list.html', {'networklist': sorted(data)})
-
 def network_list_combined(request):
 	data = []
+	listtags = []
+	filtertags = request.POST.getlist("tags")
+
 	pools = settings.XENPOOLS
 
-	for poolname in pools:
-		networks = Xen(poolname).network_list()
+	form = TagsForm(request.POST or None)
 
+	for poolname in pools:
+		tags = Xen(poolname).get_tags()
+		for tag in tags:
+			listtags += [( tag, tag )]
+
+		networks = Xen(poolname).network_list()
 		for ref, net in networks.items():
-			if not 'Production' in net['tags']: continue
-			data += [{
-				'name':        net['name_label'],
-				'description': net['name_description'],
-				'uuid':        net['uuid'],
-				'poolname':    poolname,
-			}]
+
+			if not net['tags']: continue
+			if contains(filtertags, net['tags']):
+
+				data += [{
+					'name':        net['name_label'],
+					'description': net['name_description'],
+					'uuid':        net['uuid'],
+					'poolname':    poolname,
+				}]
+
+	listtags = list(set(listtags))
+	form.fields['tags'].choices = sorted(listtags)
 
 	sorted_data = sorted(data, key=itemgetter('name'))
 	if 'json' in request.REQUEST:
 		return HttpResponse(json.dumps({'networklist': sorted_data }), content_type = "application/json")
 	else:
-		return render(request, 'gridomatic/network_list.html', {'networklist': sorted_data })
+		return render(request, 'gridomatic/network_list.html', {'networklist': sorted_data, 'form': form })
 
 
 @login_required
