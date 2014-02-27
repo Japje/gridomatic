@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
-from operator import itemgetter
 from django.conf import settings
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from operator import itemgetter
+from collections import OrderedDict
 from forms import *
 from .xen import Xen
 import json
@@ -12,6 +14,13 @@ import random
 
 def gen_password(size=24, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
+
+# Check if big list contains all items in small list
+def contains(small, big):
+	for item in small:
+		if not item in big:
+			return False
+	return True
 
 
 # mainpage
@@ -54,26 +63,41 @@ def vm_list(request, poolname):
 
 @login_required
 def vm_list_combined(request):
+
 	data = []
+	listtags = []
 	pools = settings.XENPOOLS
 
+	filtertags = request.POST.getlist("tags")
+
+	form = TagsForm(request.POST or None)
 	for poolname in pools:
+		tags = Xen(poolname).get_tags()
+		for tag in tags:
+			listtags += [( tag, tag )]
+
 		vms = Xen(poolname).vm_list()
 
 		for ref,vm in vms.items():
 			if vm["is_a_template"] or vm['is_a_snapshot'] or vm["is_control_domain"]: continue
-			data += [{
-				'name':        vm['name_label'],
-				'power_state': vm['power_state'],
-				'uuid':        vm['uuid'],
-				'poolname': poolname,
-			}]
+
+			if contains(filtertags, vm['tags']):
+				data += [{
+					'name':        vm['name_label'],
+					'power_state': vm['power_state'],
+					'uuid':        vm['uuid'],
+					'poolname': poolname,
+				}]
 
 	sorted_data = sorted(data, key=itemgetter('name'))
+
+	listtags = list(set(listtags))
+	form.fields['tags'].choices = listtags
+
 	if 'json' in request.REQUEST:
 		return HttpResponse(json.dumps({'vmlist': sorted_data}), content_type = "application/json")
 	else:
-		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted_data})
+		return render(request, 'gridomatic/vm_list.html', {'vmlist': sorted_data, 'form': form})
 
 
 @login_required

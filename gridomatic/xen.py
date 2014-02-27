@@ -76,6 +76,10 @@ class Xen():
 		vm_details = self.session.xenapi.VM.get_record(vm_ref)
 		return vm_details
 
+	def get_tags(self):
+		poolrefs = self.session.xenapi.pool.get_all()
+		tags = self.session.xenapi.pool.get_tags(poolrefs[0])
+		return tags
 
 	def network_details_ref(self, vifs):
 		names = []

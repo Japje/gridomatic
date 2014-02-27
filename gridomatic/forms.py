@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class VMCreateForm(forms.Form):
 	hostname     = forms.CharField(label="FDQN Hostname")
@@ -42,3 +43,6 @@ class VMEditForm(forms.Form):
 class NetworkEditForm(forms.Form):
 	name          = forms.CharField(help_text="Please provide a name")
 	description   = forms.CharField(help_text="Please provide a detailed description")
+
+class TagsForm(forms.Form):
+	tags = forms.MultipleChoiceField(choices = [])

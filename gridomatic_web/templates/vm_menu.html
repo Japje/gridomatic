@@ -3,9 +3,9 @@
 		Virtual Machines <b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu">
-			<li><a href="{% url "vm_list_combined" %}">All Pools</a></li>
+			<li><a href="{% url "vm_list_combined" %}">List all Virtual Machines</a></li>
 			{% for pool in pools %}
-			<li><a href="{% url "vm_list" pool %}">{{ pool|capfirst }}</a></li>
+			<li><a href="{% url "vm_create" pool %}">Create VM on {{ pool|capfirst }}</a></li>
 			{% endfor %}
 	</ul>
 </li>
