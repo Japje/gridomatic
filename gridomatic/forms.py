@@ -36,8 +36,8 @@ class NetworkCreateForm(forms.Form):
 
 class VMEditForm(forms.Form):
 	description = forms.CharField(help_text="Please provide a detailed description", label="Description")
-	mem_size    = forms.IntegerField(label="Memory Size", help_text="Size in MB", min_value=256)
-	cpu_cores   = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
+	mem_size    = forms.IntegerField(label="Memory Size", help_text="Size in MB (Only editable if VM is Halted)", min_value=256)
+	cpu_cores   = forms.IntegerField(label="CPU Cores", help_text="(Only editable if VM is Halted)", initial=1, min_value=1)
 	backup      = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups", required=False)
 	tags        = forms.MultipleChoiceField(choices = [])
 
