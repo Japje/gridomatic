@@ -124,6 +124,15 @@ def vm_details(request, poolname, uuid):
 def vm_edit(request,  poolname, uuid):
 	details = Xen(poolname).vm_details(uuid)
 	backup = False
+	pooltags = []
+
+	tags = Xen(poolname).get_tags()
+	for tag in tags:
+		pooltags += [( tag, tag )]
+
+	pooltags = list(set(pooltags))
+
+	vmtags = details['tags']
 
 	if 'XenCenter.CustomFields.backup' in details['other_config']:
 		if details['other_config']['XenCenter.CustomFields.backup'] == '1':
@@ -134,7 +143,10 @@ def vm_edit(request,  poolname, uuid):
 		'cpu_cores':   details['VCPUs_at_startup'],
 		'backup':      backup,
 		'mem_size':    int(details['memory_static_max'])/1024/1024,
+		'tags':        vmtags,
 	})
+
+	form.fields['tags'].choices = sorted(pooltags)
 
 	if form.is_valid():
 		Xen(poolname).vm_update(uuid, form.cleaned_data)

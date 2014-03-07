@@ -287,6 +287,10 @@ class Xen():
 		vm_ref        = self.session.xenapi.VM.get_by_uuid(uuid)
 		cur_cpu_cores = int(self.session.xenapi.VM.get_VCPUs_max(vm_ref))
 
+		tags          = fields['tags']
+
+		self.session.xenapi.VM.set_tags(vm_ref, tags)
+
 		other_data = {}
 		if fields['backup'] is True:
 			other_data['XenCenter.CustomFields.backup'] = '1'
