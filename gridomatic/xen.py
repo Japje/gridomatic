@@ -298,19 +298,20 @@ class Xen():
 			other_data['XenCenter.CustomFields.backup'] = '0'
 	
 		self.session.xenapi.VM.set_other_config(vm_ref, other_data)
-		
-
-
-		if cur_cpu_cores >= cpu_cores:
-			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
-			self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
-		else:
-			self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
-			self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
-	
-		self.session.xenapi.VM.set_memory_limits(vm_ref, str(memory), str(memory), str(memory),str(memory))
-
 		self.session.xenapi.VM.set_name_description(vm_ref, description)
+
+		vm_details = self.session.xenapi.VM.get_record(vm_ref)
+
+		if vm_details['power_state'] == 'Halted':
+
+			if cur_cpu_cores >= cpu_cores:
+				self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
+				self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
+			else:
+				self.session.xenapi.VM.set_VCPUs_max(vm_ref, str(cpu_cores))
+				self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(cpu_cores))
+
+			self.session.xenapi.VM.set_memory_limits(vm_ref, str(memory), str(memory), str(memory),str(memory))
 
 
 	def network_update(self, uuid, fields):

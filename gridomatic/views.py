@@ -146,6 +146,10 @@ def vm_edit(request,  poolname, uuid):
 		'tags':        vmtags,
 	})
 
+	if details['power_state'] == 'Running':
+		form.fields['mem_size'].widget.attrs['readonly'] = True
+		form.fields['cpu_cores'].widget.attrs['readonly'] = True
+
 	form.fields['tags'].choices = sorted(pooltags)
 
 	if form.is_valid():

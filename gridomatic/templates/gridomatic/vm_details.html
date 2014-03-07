@@ -16,7 +16,7 @@
    <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-warning vm-restart" value="Restart">
    <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-danger  vm-stop"    value="Stop" >
 {% endif %}
-   <a href="{% url "vm_edit" item.poolname item.uuid %}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-primary" {% if not item.powerstate == 'Halted' %}disabled="disabled"{% endif %}>Edit</a>
+   <a href="{% url "vm_edit" item.poolname item.uuid %}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-primary">Edit</a>
    <input type="button" data-uuid="{{ item.uuid }}" data-poolname="{{ item.poolname }}" class="btn btn-xs btn-danger vm-destroy" value="Destroy" {% if not item.powerstate == 'Halted' %}disabled="disabled"{% endif %}>
 
 <hr>
