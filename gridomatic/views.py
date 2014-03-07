@@ -289,4 +289,3 @@ def network_edit(request, poolname, uuid):
 		return redirect('network_details', poolname, uuid )
 
 	return render(request, 'gridomatic/network_edit.html', {'details': details, 'form': form, 'poolname': poolname})
-
