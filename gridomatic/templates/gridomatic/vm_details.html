@@ -48,7 +48,7 @@
 					<tr><td>Powerstate</td><td>{{ item.powerstate }}</td></tr>
 					<tr><td>Cores</td><td>{{ item.vcpus }}</td></tr>
 					<tr><td>Memory</td><td>{{ item.memory|filesizeformat }}</td></tr>
-					<tr><td>Tags</td><td>{{ item.tags|json2html }}</td></tr>
+					<tr><td>Host</td><td>{{ item.host }}</td></tr>
 					<tr><td>Networks</td><td><ul>
 						{% for network in item.networks %}
 							<li><a href="{% url "network_details" item.poolname network.uuid %}" > {{network.name }}</a></li>
@@ -59,9 +59,11 @@
 							<li>[{{ disk.name }}] - Size: {{ disk.size|filesizeformat }}</li>
 						{% endfor %}
 					</ul></td></tr>
-					<tr><td>Host</td><td>{{ item.host }}</td></tr>
+					<tr><td>Customfields</td><td>{{ item.customfield|json2html }}</td></tr>
+					<tr><td>Tags</td><td>{{ item.tags|json2html }}</td></tr>
             </tbody>
          </table>
+
 
 
       </div>

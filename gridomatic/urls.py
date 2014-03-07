@@ -20,4 +20,7 @@ urlpatterns = patterns('',
 	url(r'^pool/(?P<poolname>[^/]+)/network/create/$',                  network_create,  name='network_create'),
 	url(r'^pool/(?P<poolname>[^/]+)/network/details/(?P<uuid>[^/]+)/$', network_details, name='network_details'),
 	url(r'^pool/(?P<poolname>[^/]+)/network/edit/(?P<uuid>[^/]+)/$',    network_edit,    name='network_edit'),
+
+	url(r'^pool/(?P<poolname>[^/]+)/tag/list/$',                       tag_list,   name='tag_list'),
+
 )

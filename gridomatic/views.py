@@ -89,6 +89,15 @@ def vm_details(request, poolname, uuid):
 	else:
 		host  = {'name_label': 'Not implemented for stopped VMs yet'}
 
+	customfield = {}
+
+	for item in details['other_config']:
+		if 'XenCenter.CustomFields' not in item: continue
+		field = str(item.split('.')[2])
+		value = str(details['other_config'][item])
+
+		customfield[field] = value
+
 	data = []
 	data += [{
 			'name': details['name_label'],
@@ -102,6 +111,7 @@ def vm_details(request, poolname, uuid):
 			'tags': details['tags'],
 			'disks': Xen(poolname).disks_by_vdb(details['VBDs']),
 			'networks': Xen(poolname).network_details_ref(details['VIFs']),
+			'customfield':  customfield,
 	}]
 
 	if 'json' in request.REQUEST:
@@ -279,3 +289,4 @@ def network_edit(request, poolname, uuid):
 		return redirect('network_details', poolname, uuid )
 
 	return render(request, 'gridomatic/network_edit.html', {'details': details, 'form': form, 'poolname': poolname})
+
