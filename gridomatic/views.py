@@ -131,14 +131,35 @@ def vm_edit(request,  poolname, uuid):
 		pooltags += [( tag, tag )]
 
 	pooltags = list(set(pooltags))
+	vmtags   = details['tags']
+	customfield = {}
 
-	vmtags = details['tags']
+
+	# populate all possible customfields to show empty fields
+	poolcustomfields = Xen(poolname).get_other_config()
+	for item in poolcustomfields:
+		if 'XenCenter.CustomFields' not in item: continue
+		field = str(item.split('.')[2])
+		value = poolcustomfields[item]
+		customfield[field] = value
+
+	# fill the custom fields with already excisting data
+	for item in details['other_config']:
+		if 'XenCenter.CustomFields' not in item: continue
+		field = str(item.split('.')[2])
+		value = str(details['other_config'][item])
+		customfield[field] = value
+
+
+	# We want a fancy select box for this one
+	del customfield['backup']
 
 	if 'XenCenter.CustomFields.backup' in details['other_config']:
 		if details['other_config']['XenCenter.CustomFields.backup'] == '1':
 			backup = True
 
-	form = VMEditForm(request.POST or None, initial={
+
+	form = VMEditForm(request.POST or None, extra=customfield ,initial={
 		'description': details['name_description'],
 		'cpu_cores':   details['VCPUs_at_startup'],
 		'backup':      backup,

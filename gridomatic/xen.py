@@ -81,6 +81,11 @@ class Xen():
 		tags = self.session.xenapi.pool.get_tags(poolrefs[0])
 		return tags
 
+	def get_other_config(self):
+		poolrefs = self.session.xenapi.pool.get_all()
+		other_config = self.session.xenapi.pool.get_other_config(poolrefs[0])
+		return other_config
+
 	def network_details_ref(self, vifs):
 		names = []
 		for vif_ref in vifs:
@@ -296,7 +301,12 @@ class Xen():
 			other_data['XenCenter.CustomFields.backup'] = '1'
 		else:
 			other_data['XenCenter.CustomFields.backup'] = '0'
-	
+
+		for item in fields:
+			if 'customfield' not in item: continue
+			field = str(item.split('.')[1])
+			other_data['XenCenter.CustomFields.%s' % field] = str(fields[item])
+
 		self.session.xenapi.VM.set_other_config(vm_ref, other_data)
 		self.session.xenapi.VM.set_name_description(vm_ref, description)
 

@@ -41,6 +41,13 @@ class VMEditForm(forms.Form):
 	backup      = forms.BooleanField(help_text="Select if we should create Backups for this VM", label="Create Backups", required=False)
 	tags        = forms.MultipleChoiceField(choices = [])
 
+	def __init__(self, *args, **kwargs):
+		extra = kwargs.pop('extra')
+		super(VMEditForm, self).__init__(*args, **kwargs)
+
+		for key,value in extra.items():
+			self.fields['customfield.%s' % key] = forms.CharField(label=key, initial=value)
+
 class NetworkEditForm(forms.Form):
 	name          = forms.CharField(help_text="Please provide a name")
 	description   = forms.CharField(help_text="Please provide a detailed description")
