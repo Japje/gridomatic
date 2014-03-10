@@ -287,7 +287,7 @@ def network_create(request, poolname):
 
 	if form.is_valid():
 		Xen(poolname).network_create(form.cleaned_data)
-		return redirect('network_list',poolname)
+		return redirect('network_list_combined')
 	return render(request, 'gridomatic/network_create.html', {'form': form})
 
 
