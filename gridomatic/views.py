@@ -141,7 +141,8 @@ def vm_edit(request,  poolname, uuid):
 		if 'XenCenter.CustomFields' not in item: continue
 		field = str(item.split('.')[2])
 		value = poolcustomfields[item]
-		customfield[field] = value
+		if value == 'not set':
+			customfield[field] = ""
 
 	# fill the custom fields with already excisting data
 	for item in details['other_config']:
