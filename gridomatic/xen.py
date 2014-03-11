@@ -214,6 +214,9 @@ class Xen():
 		except Exception, e:
 			raise Exception(e)
 
+		tags = options['tags']
+
+		self.session.xenapi.VM.set_tags(vm_ref, tags)
 
 		vm_details = self.session.xenapi.VM.get_record(vm_ref)
 		vbds = vm_details['VBDs']
@@ -268,13 +271,20 @@ class Xen():
 		mem    = str(intmem)
 		self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
 
+		other_data = {}
+
 		# Set backup flag in customfield
 		if options['backup'] is True:
-			backup_value = '1'
+			other_data['XenCenter.CustomFields.backup'] = '1'
 		else:
-			backup_value = '0'
-	
-		self.session.xenapi.VM.add_to_other_config(vm_ref, 'XenCenter.CustomFields.backup', backup_value)
+			other_data['XenCenter.CustomFields.backup'] = '0'
+
+		for item in options:
+			if 'customfield' not in item: continue
+			field = str(item.split('.')[1])
+			other_data['XenCenter.CustomFields.%s' % field] = str(options[item])
+
+		self.session.xenapi.VM.set_other_config(vm_ref, other_data)
 
 		self.session.xenapi.VM.set_name_description(vm_ref, str(options['description']))
 

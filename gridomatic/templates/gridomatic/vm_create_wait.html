@@ -16,7 +16,7 @@
 <script>
 $(document).ready(function(){
 	$('#spin').spin('large')
-	wait_then_goto({task_id: '{{ task_id}}'}, '{% url 'vm_list' poolname %}')
+	wait_then_goto({task_id: '{{ task_id}}'}, '{% url 'vm_list_combined' %}')
 })
 </script>
 {% endblock%}

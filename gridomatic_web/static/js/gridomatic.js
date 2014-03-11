@@ -47,7 +47,7 @@ $(document).ready(function() {
 	$('.vm-destroy').click(function() {
 		$(this).parent().spin('small')
 		$(this).hide()
-		$.post('../../../vm/destroy/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, function(data) {wait_then_goto(data, '../../../vm/list/') } )
+		$.post('../../../vm/destroy/', { 'poolname': $(this).attr("data-poolname"), 'uuid': $(this).attr("data-uuid") }, function(data) {wait_then_goto(data, '../../../../../vm/list/') } )
 	})
 
 	$('.vm-restart').click(function() {

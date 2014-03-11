@@ -28,6 +28,15 @@ class VMCreateForm(forms.Form):
 	backup       = forms.BooleanField(label="Create Backups using XenBackup", required=False)
 	puppet       = forms.BooleanField(label="Enable Puppet", required=False)
 	puppetmaster = forms.ChoiceField(choices = [], required=False, help_text="Will only be used if enabled")
+	tags        = forms.MultipleChoiceField(choices = [])
+
+	def __init__(self, *args, **kwargs):
+		extra = kwargs.pop('extra')
+		super(VMCreateForm, self).__init__(*args, **kwargs)
+
+		for key,value in extra.items():
+			self.fields['customfield.%s' % key] = forms.CharField(label=key, initial=value)
+
 
 class NetworkCreateForm(forms.Form):
 	name        = forms.CharField(help_text="Name for the new Network")

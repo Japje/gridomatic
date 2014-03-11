@@ -142,7 +142,7 @@ def vm_edit(request,  poolname, uuid):
 		field = str(item.split('.')[2])
 		value = poolcustomfields[item]
 		if value == 'not set':
-			customfield[field] = ""
+			customfield[field] = value
 
 	# fill the custom fields with already excisting data
 	for item in details['other_config']:
@@ -211,7 +211,21 @@ def vm_restart(request, poolname):
 
 @login_required
 def vm_create(request, poolname):
-	form = VMCreateForm(request.POST or None, initial={'password': gen_password()} )
+	customfield = {}
+
+	# populate all possible customfields to show empty fields
+	poolcustomfields = Xen(poolname).get_other_config()
+	for item in poolcustomfields:
+		if 'XenCenter.CustomFields' not in item: continue
+		field = str(item.split('.')[2])
+		value = poolcustomfields[item]
+		if value == 'not set':
+			customfield[field] = ""
+
+	# We want a fancy select box for this one
+	del customfield['backup']
+
+	form = VMCreateForm(request.POST or None, extra=customfield, initial={'password': gen_password()} )
 	x = Xen(poolname)
 	networks = x.network_list()	
 	network_list = []
@@ -230,10 +244,21 @@ def vm_create(request, poolname):
 			master,
 		)]
 
+	pooltags = []
+
+	tags = Xen(poolname).get_tags()
+	for tag in tags:
+		pooltags += [( tag, tag )]
+
+	pooltags = list(set(pooltags))
+
 	form.fields['network'].choices      = sorted(network_list)
 	form.fields['template'].choices     = sorted(x.get_template_list())
 	form.fields['host'].choices         = sorted(x.get_host_list(), reverse=True)
 	form.fields['puppetmaster'].choices = sorted(puppetmaster_list)
+
+	form.fields['tags'].choices = sorted(pooltags)
+
 
 	if form.is_valid():
 		task_id = tasks.vm_deploy.delay(poolname,form.cleaned_data).id
