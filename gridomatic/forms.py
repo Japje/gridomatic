@@ -1,9 +1,26 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.validators import validate_ipv46_address, RegexValidator
+import re
+
+
+def full_domain_validator(hostname):
+	HOSTNAME_LABEL_PATTERN = re.compile("(?!-)[A-Z\d-]+(?<!-)$", re.IGNORECASE)
+	if not hostname:
+		return
+	if len(hostname) > 255:
+		raise ValidationError(_("The domain name cannot be composed of more than 255 characters."))
+	if hostname[-1:] == ".":
+		hostname = hostname[:-1]  # strip exactly one dot from the right, if present
+ 	for label in hostname.split("."):
+		if len(label) > 63:
+			raise ValidationError(_("The label '%(label)s' is too long (maximum is 63 characters).") % {'label': label})
+		if not HOSTNAME_LABEL_PATTERN.match(label):
+			raise ValidationError(_("Unallowed characters in label '%(label)s'.") % {'label': label})
+
 
 class VMCreateForm(forms.Form):
-	hostname     = forms.CharField(label="FDQN Hostname", validators=[RegexValidator('^[a-z0-9]+\.[a-z0-9]{1,10}$','fullhostname.domain.com only','Invalid Entry')] )
+	hostname     = forms.CharField(label="FDQN Hostname", validators=[full_domain_validator] )
 	description  = forms.CharField(help_text="Please provide a detailed description")
 
 	template     = forms.ChoiceField(choices = [])
