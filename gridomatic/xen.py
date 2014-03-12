@@ -34,6 +34,14 @@ class Xen():
 		}
 		tags = [ 'Production']
 
+		ipv4_network = str(options['ipv4_gateway'])+'|'+str(options['ipv4_netmask'])
+		other_config['XenCenter.CustomFields.network.ipv4'] = ipv4_network
+
+		if  options['ipv6_gateway'] and options['ipv6_netmask']:
+			ipv6_network = str(options['ipv6_gateway'])+'|'+str(options['ipv6_netmask'])
+			other_config['XenCenter.CustomFields.network.ipv6'] = ipv6_network
+
+
 		network_ref = self.session.xenapi.network.create({'name_label': name, 'name_description': description, 'other_config': other_config, 'tags': tags})
 		self.session.xenapi.pool.create_VLAN('bond0', network_ref, vlan)
 		return True

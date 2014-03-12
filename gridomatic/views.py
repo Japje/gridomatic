@@ -323,9 +323,20 @@ def network_details(request, poolname, uuid):
 	vms = Xen(poolname).vmdetails_by_vif(vifs)
 	data = []
 
+	if 'XenCenter.CustomFields.network.ipv6' in details['other_config']:
+		ipv6_gateway = str(details['other_config']['XenCenter.CustomFields.network.ipv6']).split('|', 2)[0]
+		ipv6_netmask = str(details['other_config']['XenCenter.CustomFields.network.ipv6']).split('|', 2)[1]
+	else:
+		ipv6_gateway = ""
+		ipv6_netmask = ""
+
 	data += [{
          'name': details['name_label'],
          'description': details['name_description'],
+			'ipv4_gateway':  str(details['other_config']['XenCenter.CustomFields.network.ipv4']).split('|', 2)[0],
+			'ipv4_netmask':  str(details['other_config']['XenCenter.CustomFields.network.ipv4']).split('|', 2)[1],
+			'ipv6_gateway':  ipv6_gateway,
+			'ipv6_netmask':  ipv6_netmask,
 			'uuid':  details['uuid'],
 			'mtu':  details['MTU'],
 			'tags':  details['tags'],

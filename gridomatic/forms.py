@@ -32,9 +32,14 @@ class VMCreateForm(forms.Form):
 
 
 class NetworkCreateForm(forms.Form):
-	name        = forms.CharField(help_text="Name for the new Network")
-	description = forms.CharField(help_text="Please provide a detailed description")
-	vlan        = forms.IntegerField(label="VLAN")
+	name          = forms.CharField(help_text="Name for the new Network")
+	description   = forms.CharField(help_text="Please provide a detailed description")
+	vlan          = forms.IntegerField(label="VLAN")
+	ipv4_gateway  = forms.GenericIPAddressField(protocol='ipv4', label="IPv4 Gateway") 
+	ipv4_netmask  = forms.GenericIPAddressField(protocol='ipv4', label="IPv4 netmask") 
+	ipv6_gateway  = forms.GenericIPAddressField(protocol='ipv6', required=False, label="IPv6 gateway (Optional)")
+	ipv6_netmask  = forms.IntegerField(label='IPv6 netmask (Optional)', required=False, min_value=1, max_value=128)
+
 
 class VMEditForm(forms.Form):
 	description = forms.CharField(help_text="Please provide a detailed description", label="Description")
