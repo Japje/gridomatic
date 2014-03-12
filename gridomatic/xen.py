@@ -281,8 +281,8 @@ class Xen():
 		self.session.xenapi.VM.set_VCPUs_at_startup(vm_ref, str(options['cpu_cores']))
 		
 		# Set the mem to int, calc to bytes, then back to str.. thanks again citrix for being consistent!
-		intmem = int(options['mem_size'])*1024*1024
-		mem    = str(intmem)
+		mem    = str(options['mem_size'])
+
 		self.session.xenapi.VM.set_memory_limits(vm_ref, mem, mem, mem, mem)
 
 		other_data = {}

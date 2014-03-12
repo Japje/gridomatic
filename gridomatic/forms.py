@@ -8,8 +8,34 @@ class VMCreateForm(forms.Form):
 	description  = forms.CharField(help_text="Please provide a detailed description")
 
 	template     = forms.ChoiceField(choices = [])
-	mem_size     = forms.IntegerField(label="Memory Size (MB)", min_value=256, initial=256)
-	cpu_cores    = forms.IntegerField(label="CPU Cores", initial=1, min_value=1)
+
+	# Memory has to be in KB
+	MEMORY_CHOICES = (
+		('268435456', '256 MB'),
+		('536870912', '512 MB'),
+		('1073741824', '1 GB'),
+		('2147483648', '2 GB'),
+		('4294967296', '4 GB'),
+		('8589934592', '6 GB'),
+		('10737418240', '10 GB'),
+		('12884901888', '12 GB'),
+		('15032385536', '14 GB'),
+		('17179869184', '16 GB'),
+	)
+
+	CPU_CHOICES = (
+		('1', '1'),
+		('2', '2'),
+		('4', '4'),
+		('6', '6'),
+		('8', '8'),
+		('10', '10'),
+		('12', '12'),
+		('14', '14'),
+		('16', '16'),
+	)
+	mem_size     = forms.ChoiceField(choices = MEMORY_CHOICES, initial='512',label="Memory Size")
+	cpu_cores    = forms.ChoiceField(choices = CPU_CHOICES, initial='1', label="CPU Cores")
 
 	network      = forms.ChoiceField(choices = [])
 	ip_address   = forms.GenericIPAddressField(protocol='ipv4', label="IPv4 Address") 
