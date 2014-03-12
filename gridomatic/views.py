@@ -229,6 +229,7 @@ def vm_create(request, poolname):
 	x = Xen(poolname)
 	networks = x.network_list()	
 	network_list = []
+
 	for net in networks:
 		if not 'Production' in networks[net]['tags']: continue
 		network_list += [(
@@ -251,8 +252,9 @@ def vm_create(request, poolname):
 		pooltags += [( tag, tag )]
 
 	pooltags = list(set(pooltags))
+	network_list_sorted = sorted(network_list, key=lambda x: x[1])
 
-	form.fields['network'].choices      = sorted(network_list)
+	form.fields['network'].choices      = network_list_sorted
 	form.fields['template'].choices     = sorted(x.get_template_list())
 	form.fields['host'].choices         = sorted(x.get_host_list(), reverse=True)
 	form.fields['puppetmaster'].choices = sorted(puppetmaster_list)

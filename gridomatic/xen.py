@@ -178,9 +178,9 @@ class Xen():
 
 
 	def vm_deploy(self, options):
-		name           = options['hostname']
-		hostname       = options['hostname']
-		(name, domain) = name.split('.', 1)
+		name     = options['hostname']
+		domain   = options['domain']
+		hostname = name+'.'+domain
 
 		# Get the host -> PBD -> SR on which we will copy the template
 		host_ref = self.session.xenapi.host.get_by_name_label(options['host'])
@@ -259,8 +259,12 @@ class Xen():
 		if options['ip_address6']:
 			data['vm-data/ip6'] = str(options['ip_address6'])
 			# gateway and netmask are pulled from the customfields of the network
-			data['vm-data/gw6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[0]
-			data['vm-data/nm6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[1]
+			if 'XenCenter.CustomFields.network.ipv6' in network_other_config:
+				data['vm-data/gw6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[0]
+				data['vm-data/nm6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[1]
+			else:
+				data['vm-data/gw6'] = ""
+				data['vm-data/nm6'] = ""
 
 		if options['puppet'] is True:
 			if puppet['pub_cert']:
