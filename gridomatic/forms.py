@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.core.validators import validate_ipv46_address, RegexValidator
 
 class VMCreateForm(forms.Form):
-	hostname     = forms.CharField(label="FDQN Hostname")
+	hostname     = forms.CharField(label="FDQN Hostname", validators=[RegexValidator('^[a-z0-9]+\.[a-z0-9]{1,10}$','fullhostname.domain.com only','Invalid Entry')] )
 	description  = forms.CharField(help_text="Please provide a detailed description")
 
 	template     = forms.ChoiceField(choices = [])
