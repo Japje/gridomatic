@@ -251,7 +251,8 @@ class Xen():
 		data['vm-data/nm']       = str(network_other_config['XenCenter.CustomFields.network.ipv4']).split('|', 2)[1]
 		data['vm-data/ns']       = str(network_other_config['XenCenter.CustomFields.network.dns'])
 
-		data['vm-data/dm']       = str(domain)
+		data['vm-data/hostname'] = str(options['hostname'])
+		data['vm-data/domain']  = str(options['domain'])
 		data['vm-data/sshkey']   = str(options['sshkey'])
 		data['vm-data/password'] = str(options['password'])
 
