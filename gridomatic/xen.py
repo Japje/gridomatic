@@ -232,12 +232,17 @@ class Xen():
 		if options['puppet'] is True:
 			puppet = self.puppet_gen_certs(options['puppetmaster'],hostname)
 
+		network_ref  = self.session.xenapi.network.get_by_uuid(options['network'])
+		network_other_config = self.session.xenapi.network.get_other_config(network_ref)
+
 		# Data to go into xenstore_data
 		data = {}
 		data['vm-data/ip']       = str(options['ip_address'])
-		data['vm-data/gw']       = str(options['gateway'])
-		data['vm-data/nm']       = str(options['netmask'])
-		data['vm-data/ns']       = str(options['dns'])
+
+		data['vm-data/gw']       = str(network_other_config['XenCenter.CustomFields.network.ipv4']).split('|', 2)[0]
+		data['vm-data/nm']       = str(network_other_config['XenCenter.CustomFields.network.ipv4']).split('|', 2)[1]
+		data['vm-data/ns']       = str(network_other_config['XenCenter.CustomFields.network.dns'])
+
 		data['vm-data/dm']       = str(domain)
 		data['vm-data/sshkey']   = str(options['sshkey'])
 		data['vm-data/password'] = str(options['password'])
@@ -245,12 +250,9 @@ class Xen():
 		# Optional data
 		if options['ip_address6']:
 			data['vm-data/ip6'] = str(options['ip_address6'])
-
-		if options['gateway6']:
-			data['vm-data/gw6'] = str(options['gateway6'])
-
-		if options['netmask6']:
-			data['vm-data/nm6'] = str(options['netmask6'])
+			# gateway and netmask are pulled from the customfields of the network
+			data['vm-data/gw6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[0]
+			data['vm-data/nm6'] = str(network_other_config['XenCenter.CustomFields.network.ipv6']).split('|', 2)[1]
 
 		if options['puppet'] is True:
 			if puppet['pub_cert']:
