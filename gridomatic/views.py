@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 from django.conf import settings
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.forms.util import ValidationError
 from operator import itemgetter
 from collections import OrderedDict
 from forms import *
@@ -19,6 +20,17 @@ def gen_password(size=24, chars=string.ascii_lowercase + string.digits):
 def contains(small, big):
 	for item in small:
 		if not item in big:
+			return False
+	return True
+
+
+# check if network supports ipv6
+def network_has_ipv6(poolname, network_uuid, ipv6_addr = None):
+	if not ipv6_addr:
+		return True
+	else:
+		network_details = Xen(poolname).network_details_uuid(network_uuid)
+		if not 'XenCenter.CustomFields.network.ipv6' in network_details['other_config']:
 			return False
 	return True
 
@@ -262,9 +274,14 @@ def vm_create(request, poolname):
 	form.fields['tags'].choices = sorted(pooltags)
 
 
+	if request.method == 'POST':
+		if not network_has_ipv6(poolname, request.POST['network'], request.POST['ip_address6']):
+			form.errors['ip_address6'] = 'Selected Network has no IPv6 support!'
+
 	if form.is_valid():
 		task_id = tasks.vm_deploy.delay(poolname,form.cleaned_data).id
 		return render(request, 'gridomatic/vm_create_wait.html', {'form': form, 'task_id': task_id, 'poolname': poolname})
+
 	return render(request, 'gridomatic/vm_create.html', {'form': form, 'poolname': poolname})
 
 

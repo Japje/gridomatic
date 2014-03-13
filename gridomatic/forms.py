@@ -36,20 +36,21 @@ class VMCreateForm(forms.Form):
 		('16', '16'),
 	)
 	mem_size     = forms.ChoiceField(choices = MEMORY_CHOICES, initial='512',label="Memory Size")
-	cpu_cores    = forms.ChoiceField(choices = CPU_CHOICES, initial='1', label="CPU Cores")
+	cpu_cores    = forms.ChoiceField(choices = CPU_CHOICES, initial='1', label="CPU Cores", help_text="<br />")
 
 	network      = forms.ChoiceField(choices = [])
 	ip_address   = forms.GenericIPAddressField(protocol='ipv4', label="IPv4 Address") 
-	ip_address6  = forms.GenericIPAddressField(protocol='ipv6', required=False, label="IPv6 Address (Optional)")
+	ip_address6  = forms.GenericIPAddressField(protocol='ipv6', required=False, label="IPv6 Address (optional)")
 
 	host         = forms.ChoiceField(choices = [])
+	backup       = forms.BooleanField(label="Create Backups using XenBackup", required=False, help_text="Check to enable a daily backup of this VM")
 
-	password     = forms.CharField(help_text="Copy this password! It will NOT be shown again!")
+	password     = forms.CharField(help_text="Save the password! It will not be shown again!")
 	sshkey       = forms.CharField(help_text="Public Key in OpenSSH format", label="SSH key")
 
-	backup       = forms.BooleanField(label="Create Backups using XenBackup", required=False)
 	puppet       = forms.BooleanField(label="Enable Puppet", required=False)
 	puppetmaster = forms.ChoiceField(choices = [], required=False, help_text="Will only be used if enabled")
+
 	tags        = forms.MultipleChoiceField(choices = [])
 
 	def __init__(self, *args, **kwargs):
