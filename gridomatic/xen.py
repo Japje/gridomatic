@@ -1,4 +1,5 @@
 from django.conf import settings
+from urlparse import urlparse
 import XenAPI
 import sh
 
@@ -8,9 +9,9 @@ class Xen():
 			session = XenAPI.Session(settings.XENPOOLS[poolname]['url'])
 			session.xenapi.login_with_password(settings.XENPOOLS[poolname]['user'], settings.XENPOOLS[poolname]['password'])
 		except Exception, e:
-			if e.details[0] == 'HOST_IS_SLAVE':
+			if hasattr(e, 'details') and e.details[0] == 'HOST_IS_SLAVE':
 				# Redirect to cluster master
-				url = urlparse(url).scheme + '://' + e.details[1]
+				url = urlparse(settings.XENPOOLS[poolname]['url']).scheme + '://' + e.details[1]
 				session = XenAPI.Session(url)
 				session.login_with_password(settings.XENPOOLS[poolname]['user'], settings.XENPOOLS[poolname]['password'])
 			else:
