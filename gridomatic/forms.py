@@ -69,6 +69,7 @@ class NetworkCreateForm(forms.Form):
 	ipv4_netmask  = forms.GenericIPAddressField(protocol='ipv4', label="IPv4 netmask") 
 	ipv6_gateway  = forms.GenericIPAddressField(protocol='ipv6', required=False, label="IPv6 gateway (Optional)")
 	ipv6_netmask  = forms.IntegerField(label='IPv6 netmask (Optional)', required=False, min_value=1, max_value=128)
+	dns_servers   = forms.CharField(help_text="Space seperated DNS servers")
 
 
 class VMEditForm(forms.Form):

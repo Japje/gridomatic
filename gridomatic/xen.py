@@ -42,6 +42,8 @@ class Xen():
 			ipv6_network = str(options['ipv6_gateway'])+'|'+str(options['ipv6_netmask'])
 			other_config['XenCenter.CustomFields.network.ipv6'] = ipv6_network
 
+		dns_servers = str(options['dns_servers'])
+		other_config['XenCenter.CustomFields.network.dns'] = dns_servers
 
 		network_ref = self.session.xenapi.network.create({'name_label': name, 'name_description': description, 'other_config': other_config, 'tags': tags})
 		self.session.xenapi.pool.create_VLAN('bond0', network_ref, vlan)

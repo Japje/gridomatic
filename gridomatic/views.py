@@ -358,6 +358,7 @@ def network_details(request, poolname, uuid):
 			'ipv4_netmask':  str(details['other_config']['XenCenter.CustomFields.network.ipv4']).split('|', 2)[1],
 			'ipv6_gateway':  ipv6_gateway,
 			'ipv6_netmask':  ipv6_netmask,
+			'dns_servers':    str(details['other_config']['XenCenter.CustomFields.network.dns']),
 			'VLAN':  get_vlan['VLAN'],
 			'uuid':  details['uuid'],
 			'mtu':  details['MTU'],
