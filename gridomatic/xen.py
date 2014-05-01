@@ -358,9 +358,9 @@ class Xen():
 		self.session.xenapi.network.set_name_description(network_ref, fields['description'])
 		self.session.xenapi.network.set_name_label(network_ref, fields['name'])
 
-		data = {}
-		data['automatic']     = 'false'
-		self.session.xenapi.network.set_other_config(network_ref, data)
+		#data = {}
+		#data['automatic']     = 'false'
+		#self.session.xenapi.network.set_other_config(network_ref, data)
 
 	def disks_by_vdb(self, vbds):
 		data = []
