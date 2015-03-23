@@ -240,8 +240,8 @@ class Xen():
 				self.session.xenapi.VDI.set_name_description(vdi_ref, 'Created by the Grid-o-Matic deployment tool')
 
 		# Let the puppetmaster generate a cert keys for the client, this is safer then having autosign enabled on the puppetmaster
-		if options['puppet'] is True:
-			puppet = self.puppet_gen_certs(options['puppetmaster'],hostname)
+#		if options['puppet'] is True:
+#			puppet = self.puppet_gen_certs(options['puppetmaster'],hostname)
 
 		network_ref  = self.session.xenapi.network.get_by_uuid(options['network'])
 		network_other_config = self.session.xenapi.network.get_other_config(network_ref)
@@ -270,12 +270,12 @@ class Xen():
 				data['vm-data/gw6'] = ""
 				data['vm-data/nm6'] = ""
 
-		if options['puppet'] is True:
-			if puppet['pub_cert']:
-				data['vm-data/puppet/pub'] = str(puppet['pub_cert'])
+#		if options['puppet'] is True:
+#			if puppet['pub_cert']:
+#				data['vm-data/puppet/pub'] = str(puppet['pub_cert'])
 
-			if puppet['prv_cert']:
-				data['vm-data/puppet/prv'] = str(puppet['prv_cert'])
+#			if puppet['prv_cert']:
+#				data['vm-data/puppet/prv'] = str(puppet['prv_cert'])
 
 		# set the xenstore_data for the vm with above data
 		self.session.xenapi.VM.set_xenstore_data(vm_ref, data)
