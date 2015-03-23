@@ -48,8 +48,8 @@ class VMCreateForm(forms.Form):
 	password     = forms.CharField(help_text="Save the password! It will not be shown again!")
 	sshkey       = forms.CharField(help_text="Public Key in OpenSSH format", label="SSH key")
 
-	puppet       = forms.BooleanField(label="Enable Puppet", required=False)
-	puppetmaster = forms.ChoiceField(choices = [], required=False, help_text="Will only be used if enabled")
+#	puppet       = forms.BooleanField(label="Enable Puppet", required=False)
+#	puppetmaster = forms.ChoiceField(choices = [], required=False, help_text="Will only be used if enabled")
 
 	tags        = forms.MultipleChoiceField(choices = [])
 
